@@ -8,5 +8,9 @@
 
 class Router
 {
+    public function main() {
 
+        echo 'bonjour';
+
+    }
 }
