@@ -12,7 +12,6 @@ class Router
     }
 
     public function main(){
-        
-
+        var_dump($this->serieStor->read(1));
     }
 }

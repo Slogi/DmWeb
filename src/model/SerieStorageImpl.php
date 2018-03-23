@@ -20,7 +20,54 @@ class SerieStorageImpl implements SerieStorage
 
     public function read($id)
     {
-        // TODO: Implement read() method.
+        $query = "SELECT s.idSerie, s.titre, s.auteur, s.synopsis, m.numTome, m.resume, m.dateParu 
+                  FROM serie s 
+                  join manga m on m.idSerie = s.idSerie
+                  where s.idSerie = $id
+                  order by idSerie";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        if($num>0){
+            $titre ="";
+            $auteur ="";
+            $synopsis ="";
+            $idSerie = 0;
+            $mangas = array();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+
+                if ( $idSerie === 0){
+
+                    $titre = $row['titre'];
+                    $auteur = $row['auteur'];
+                    $synopsis = $row['synopsis'];
+                    array_push($mangas, new Manga(
+                        $row['numTome'],
+                        $row['resume'],
+                        $row['dateParu']
+                    ));
+                }
+                else {
+
+                    array_push($mangas, new Manga(
+                        $row['numTome'],
+                        $row['resume'],
+                        $row['dateParu']
+                    ));
+                }
+
+                $idSerie = $row['idSerie'];
+            }
+            return new Serie( $titre, $auteur, $synopsis, $mangas);
+        }
+        else{
+            return null;
+        }
     }
 
     public function readAll()
@@ -49,8 +96,6 @@ class SerieStorageImpl implements SerieStorage
 
                 if ( $idSerie === 0){
 
-                    echo '1er itération '.$idSerie."\n";
-
                     $titre = $row['titre'];
                     $auteur = $row['auteur'];
                     $synopsis = $row['synopsis'];
@@ -61,8 +106,6 @@ class SerieStorageImpl implements SerieStorage
                     ));
                 }
                 elseif( $idSerie !== $row['idSerie']){
-
-                    echo 'id différent de celui-ci '.$idSerie."\n";
 
                     array_push( $series, new Serie( $titre, $auteur, $synopsis, $mangas));
                     $mangas = array();
@@ -76,8 +119,6 @@ class SerieStorageImpl implements SerieStorage
                     ));
                 }
                 else{
-
-                    echo 'Meme id que le précédent '.$idSerie."\n";
 
                     array_push($mangas, new Manga(
                         $row['numTome'],
