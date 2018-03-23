@@ -1,6 +1,6 @@
 <?php
 
-require_once ("./Serie.php");
+require_once ("model/Serie.php");
 
 interface SerieStorage
 {

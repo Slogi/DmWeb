@@ -1,12 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Slogix
- * Date: 22/03/2018
- * Time: 17:51
- */
+
+require_once ("model/SerieStorage.php");
+
+
 
 class Router
 {
+    public function __construct( SerieStorage $serieStor)
+    {
+        $this->serieStor = $serieStor;
+    }
 
+    public function main(){
+        
+
+    }
 }
