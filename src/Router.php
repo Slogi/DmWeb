@@ -1,27 +1,15 @@
 <?php
 
 require_once ("model/SerieStorage.php");
-
-
-
 require_once("view/View.php");
 require_once("control/Controller.php");
 
 class Router
 {
-<<<<<<< HEAD
     public function __construct( SerieStorage $serieStor)
     {
         $this->serieStor = $serieStor;
     }
-
-    public function main(){
-        var_dump($this->serieStor->read(1));
-=======
-    /*
-    public function __construct(SerieStorage $seriedb) {
-        $this->seriedb = $seriedb;
-    }*/
 
     public function main() {
         $view = new View($this);
@@ -52,6 +40,5 @@ class Router
         //$view->makeMangaPage();
         $view->render();
 
->>>>>>> master
     }
 }
