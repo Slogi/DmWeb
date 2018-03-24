@@ -17,12 +17,8 @@ class Router
 
     }
 
-    /*public function main() {
-=======
-
-
-
     public function main() {
+
 
         $view = new View($this);
         $mangadb = new MangaStorageImpl($this->db);
@@ -42,10 +38,13 @@ class Router
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
                * la page d'accueil, sauf si une couleur est demandée,
+
                * auquel cas on affiche sa page.
             $action = ($mangaId === null)? "accueil": "voir";
+
                * auquel cas on affiche sa page. */
             $action = ($serieId === null && $tomeId === null) ? "accueil" : "voir";
+
         }
 
         if ($action != null) {
@@ -69,16 +68,12 @@ class Router
 
             }
 
-        }*/
-
-        public function main(){
-
-            var_dump($this->serieStor->readAll());
+        }
 
         }
 
 
-    }
+
 
     public function mangaPage($serieId, $tomeId) {
         return ".?serie=$serieId&tome=$tomeId";

@@ -1,6 +1,7 @@
 <?php
 
 require_once ("model/Manga.php");
+
 require_once ("model/MangaStorage.php");
 
 class MangaStorageImpl implements MangaStorage
