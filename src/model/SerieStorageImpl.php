@@ -115,9 +115,9 @@ class SerieStorageImpl implements SerieStorage
             {
                 $series = array();
                 $pseudo = $row['pseudo'];
-                echo $pseudo;
                 $series = $this->readAllUser($pseudo);
-                $pseudoSeries[$pseudo] = $series;
+                $seriesMin = array_slice($series, 0, 3);
+                $pseudoSeries[$pseudo] = $seriesMin;
             }
 
             return $pseudoSeries;
