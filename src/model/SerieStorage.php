@@ -8,6 +8,8 @@ interface SerieStorage
 
     public function read($id);
 
+    public function readAllUser($pseudo);
+
     public function readAll();
 
     public function update($id, Serie $s);
