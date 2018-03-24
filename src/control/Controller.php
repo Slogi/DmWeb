@@ -11,26 +11,40 @@ require_once ("model/Serie.php");
 class Controller
 {
     protected $view;
+    protected $mangadb;
+    protected $seriedb;
 
-    public function __construct(View $v) {
+    public function __construct(View $v, MangaStorage $mangadb, SerieStorage $seriedb) {
         $this->view = $v;
+        $this->mangadb = $mangadb;
+        $this->seriedb = $seriedb;
     }
 
-    public function mangaPage($id) {
+    public function mangaPage($serieId, $tomeId) {
 
-        $manga = new Serie("titre", "auteur", "synopsis", "nbTomes", "mangas");
+        $infoSerie = $this->seriedb->read($serieId);
+        $infoManga = $this->mangadb->read($serieId,$tomeId);
+        //$manga = new Serie("titre", "auteur", "synopsis", "nbTomes", "mangas");
         //$manga = $this->mangadb->read($id);
 
-        if ($manga === null) {
-            echo 'aaa';
+        if ($infoManga === null || $infoSerie === null) {
+
             /* La couleur n'existe pas en BD */
             //$this->v->makeUnknownColorPage();
         } else {
-            echo 'bbb';
+
             /* La couleur existe, on prépare la page */
-            $this->view->makeMangaPage($id, $manga);
+            $this->view->makeMangaPage($infoSerie, $infoManga);
         }
 
+    }
+
+    public function seriePage($serieId) {
+        $infoSerie = $this->seriedb->read($serieId);
+        if ($infoSerie === null) {
+            //ERREUR SERIE PAS EN BDD
+        }
+        else $this->view->makeSeriePage($infoSerie);
     }
 
 }
