@@ -11,4 +11,7 @@ $db = $database->getConnection();
 
 $r = new Router( new SerieStorageImpl($db));
 
-$r->main();
+=======
+$router = new Router();
+$router->main();
+>>>>>>> master
