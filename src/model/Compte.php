@@ -11,6 +11,7 @@ class Compte
     protected $pseudo;
     protected $mdp;
     protected $statut;
+    protected $listeSeries;
 
 
 }

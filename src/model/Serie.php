@@ -2,17 +2,23 @@
 
 class Serie
 {
+    protected $idSerie;
     protected $titre;
     protected $auteur;
     protected $synopsis;
     protected $mangas;
 
-    public function __construct($titre, $auteur, $synopsis, $mangas)
+    public function __construct($idSerie, $titre, $auteur, $synopsis, $mangas)
     {
+        $this->idSerie = $idSerie;
         $this->titre = $titre;
         $this->auteur = $auteur;
         $this->synopsis = $synopsis;
         $this->mangas = $mangas;
+    }
+
+    public function getIdSerie(){
+        return $this->idSerie;
     }
 
     public function getTitre(){

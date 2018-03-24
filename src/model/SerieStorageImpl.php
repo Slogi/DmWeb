@@ -2,15 +2,18 @@
 
 require_once ("model/Manga.php");
 require_once ("model/Serie.php");
+require_once ("model/MangaStorageImpl.php");
 require_once ("model/SerieStorage.php");
 
 class SerieStorageImpl implements SerieStorage
 {
     private $db;
+    private $mangaSto;
 
-    public function __construct($db)
+    public function __construct($db, $mangaSto)
     {
         $this->db = $db;
+        $this->mangaSto = $mangaSto;
     }
 
     public function create(Serie $s)
@@ -18,13 +21,12 @@ class SerieStorageImpl implements SerieStorage
         // TODO: Implement create() method.
     }
 
+
     public function read($id)
     {
-        $query = "SELECT s.idSerie, s.titre, s.auteur, s.synopsis, m.numTome, m.resume, m.dateParu 
-                  FROM serie s 
-                  join manga m on m.idSerie = s.idSerie
-                  where s.idSerie = $id
-                  order by idSerie";
+        $query = "SELECT idSerie, titre, auteur, synopsis 
+                  FROM serie
+                  where idSerie = $id";
 
         $stmt = $this->db->prepare($query);
 
@@ -33,37 +35,23 @@ class SerieStorageImpl implements SerieStorage
         $num = $stmt->rowCount();
 
         if($num>0){
-            $titre ="";
-            $auteur ="";
-            $synopsis ="";
+
             $idSerie = 0;
+            $titre = "";
+            $auteur = "";
+            $synopsis = "";
             $mangas = array();
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 
-                if ( $idSerie === 0){
-
+                    $idSerie = $row['idSerie'];
                     $titre = $row['titre'];
                     $auteur = $row['auteur'];
                     $synopsis = $row['synopsis'];
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
-                }
-                else {
 
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
-                }
-
-                $idSerie = $row['idSerie'];
+                    $mangas = $this->mangaSto->readAll($idSerie);
             }
-            return new Serie( $titre, $auteur, $synopsis, $mangas);
+            return new Serie( $idSerie,$titre, $auteur, $synopsis, $mangas);
         }
         else{
             return null;
