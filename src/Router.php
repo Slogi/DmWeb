@@ -10,14 +10,20 @@ require_once("control/Controller.php");
 class Router
 {
 
-    public function __construct(SerieStorage $serieStor)
+
+
+
+    public function __construct( SerieStorage $serieStor)
+
     {
         $this->serieStor = $serieStor;
     }
 
 
-    public function main()
-    {
+
+
+    public function main() {
+
         $view = new View($this);
         $ctrl = new Controller($view);
 
@@ -51,6 +57,7 @@ class Router
         //$view->makeTestPage();
         //$view->makeMangaPage();
         $view->render();
+
 
 
     }
