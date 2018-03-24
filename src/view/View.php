@@ -38,6 +38,31 @@ class View
         include("templateManga.php");
     }
 
+    public function makeSeriePage(Serie $s) {
+        $sTitre = self::htmlesc($s->getTitre());
+        $listeMangas = $s->getMangas();
+        $content = $this->content;
+
+        //$this->content .= "<ul>\n";
+        foreach ($listeMangas as $m) {
+            $this->content .= $this->listeMangas($m, $s);
+        }
+        //$this->content .= "</ul>\n";
+
+        include("templateSerie.php");
+    }
+
+    protected function listeMangas($m, $s) {
+
+        $sId = self::htmlesc($s->getIdSerie());
+        $mNumTome = self::htmlesc($m->getNumTome());
+
+        $res = '<li><a href="'.$this->router->mangaPage($sId, $mNumTome).'" >';
+        $res .= '<h3>'. $s->getTitre().' Tome '. $m->getNumTome().'</h3>';
+        $res .= '</a></li>'."\n";
+        return $res;
+    }
+
     public function makeUnknownActionPage() {
         include("template404.php");
     }
@@ -51,6 +76,8 @@ class View
 
         include("templateTest.php");
     }
+
+
 
     public static function htmlesc($str) {
         return htmlspecialchars($str,

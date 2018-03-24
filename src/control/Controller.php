@@ -39,4 +39,12 @@ class Controller
 
     }
 
+    public function seriePage($serieId) {
+        $infoSerie = $this->seriedb->read($serieId);
+        if ($infoSerie === null) {
+            //ERREUR SERIE PAS EN BDD
+        }
+        else $this->view->makeSeriePage($infoSerie);
+    }
+
 }

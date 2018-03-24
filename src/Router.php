@@ -47,15 +47,18 @@ class Router
         if ($action != null) {
             switch ($action) {
                 case "voir":
-                    if($serieId != null && $tomeId != null){
+                    if($serieId !== null && $tomeId !== null){
                         //echo $serieId;
                         //echo $tomeId;
                         $ctrl->mangaPage($serieId, $tomeId);
                     }
-                    if($serieId === null && $tomeId != null){
+                    if($serieId === null && $tomeId !== null){
                         //echo $serieId;
                         //echo $tomeId;
                         $view->makeUnknownActionPage();
+                    }
+                    if($serieId !== null && $tomeId === null){
+                        $ctrl->seriePage($serieId);
                     }
 
                     //$ctrl->mangaPage($mangaId);
@@ -71,6 +74,10 @@ class Router
 
 
 
+    }
+
+    public function mangaPage($serieId, $tomeId) {
+        return ".?serie=$serieId&tome=$tomeId";
     }
 
 }
