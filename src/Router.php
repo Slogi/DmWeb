@@ -10,11 +10,8 @@ class Router
 
 
 
-    public function __construct($db)
-
-    {
+    public function __construct($db){
                $this->db = $db;
-
     }
 
 
@@ -33,7 +30,7 @@ class Router
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
 
-        $mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
+        //$mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
 
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
 
