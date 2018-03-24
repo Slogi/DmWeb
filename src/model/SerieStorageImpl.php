@@ -65,7 +65,7 @@ class SerieStorageImpl implements SerieStorage
         $query = "SELECT l.idSerie, s.titre, s.auteur, s.synopsis
                   FROM listeserie l
                   join serie s on l.idSerie = s.idSerie
-                  WHERE pseudo = $pseudo";
+                  WHERE pseudo = '$pseudo'";
 
         $stmt = $this->db->prepare($query);
 
@@ -89,6 +89,38 @@ class SerieStorageImpl implements SerieStorage
             }
 
             return $series;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public function readAll()
+    {
+        $query = "SELECT DISTINCT pseudo 
+                  FROM listeserie";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        if($num>0)
+        {
+            $pseudoSeries = array();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                $series = array();
+                $pseudo = $row['pseudo'];
+                echo $pseudo;
+                $series = $this->readAllUser($pseudo);
+                $pseudoSeries[$pseudo] = $series;
+            }
+
+            return $pseudoSeries;
         }
         else
         {

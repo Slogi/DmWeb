@@ -16,4 +16,5 @@ class CompteStorageStub implements CompteStorage
         // TODO: Implement checkAuth() method.
     }
 
+
 }

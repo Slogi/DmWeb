@@ -11,7 +11,7 @@ class Router
         $this->serieStor = $serieStor;
     }
 
-    public function main() {
+    /*public function main() {
         $view = new View($this);
         $ctrl = new Controller($view);
 
@@ -22,7 +22,7 @@ class Router
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
                * la page d'accueil, sauf si une couleur est demandée,
-               * auquel cas on affiche sa page. */
+               * auquel cas on affiche sa page.
             $action = ($mangaId === null)? "accueil": "voir";
         }
 
@@ -33,12 +33,11 @@ class Router
 
             }
 
+        }*/
+
+        public function main(){
+
+            var_dump($this->serieStor->readAll());
+
         }
-
-
-        //$view->makeTestPage();
-        //$view->makeMangaPage();
-        $view->render();
-
-    }
 }
