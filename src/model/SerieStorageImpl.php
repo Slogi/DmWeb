@@ -1,6 +1,5 @@
 <?php
 
-require_once ("model/Manga.php");
 require_once ("model/Serie.php");
 require_once ("model/MangaStorageImpl.php");
 require_once ("model/SerieStorage.php");
@@ -21,7 +20,11 @@ class SerieStorageImpl implements SerieStorage
         // TODO: Implement create() method.
     }
 
-
+    /**
+     * Retourne pour une série, tous ses mangas
+     * @param $id
+     * @return null|Serie
+     */
     public function read($id)
     {
         $query = "SELECT idSerie, titre, auteur, synopsis 
@@ -34,36 +37,35 @@ class SerieStorageImpl implements SerieStorage
 
         $num = $stmt->rowCount();
 
-        if($num>0){
+        if($num>0)
+        {
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $idSerie = 0;
-            $titre = "";
-            $auteur = "";
-            $synopsis = "";
-            $mangas = array();
+            $idSerie = $row['idSerie'];
+            $titre = $row['titre'];
+            $auteur = $row['auteur'];
+            $synopsis = $row['synopsis'];
+            $mangas = $this->mangaSto->readAll($idSerie);
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-
-                    $idSerie = $row['idSerie'];
-                    $titre = $row['titre'];
-                    $auteur = $row['auteur'];
-                    $synopsis = $row['synopsis'];
-
-                    $mangas = $this->mangaSto->readAll($idSerie);
-            }
             return new Serie( $idSerie,$titre, $auteur, $synopsis, $mangas);
         }
-        else{
+        else
+        {
             return null;
         }
     }
 
-    public function readAll()
+    /**
+     * Pour un utilisateur, retourne toutes ses series
+     * @param $pseudo
+     * @return array|null
+     */
+    public function readAllUser($pseudo)
     {
-        $query = "SELECT s.idSerie, s.titre, s.auteur, s.synopsis, m.numTome, m.resume, m.dateParu 
-                  FROM serie s 
-                  join manga m on m.idSerie = s.idSerie 
-                  order by idSerie";
+        $query = "SELECT l.idSerie, s.titre, s.auteur, s.synopsis
+                  FROM listeserie l
+                  join serie s on l.idSerie = s.idSerie
+                  WHERE pseudo = $pseudo";
 
         $stmt = $this->db->prepare($query);
 
@@ -71,60 +73,27 @@ class SerieStorageImpl implements SerieStorage
 
         $num = $stmt->rowCount();
 
-        if($num>0){
-
-            $titre ="";
-            $auteur ="";
-            $synopsis ="";
-            $series = array();
-            $idSerie = 0;
+        if($num>0)
+        {
             $mangas = array();
+            $series = array();
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-
-                if ( $idSerie === 0){
-
-                    $titre = $row['titre'];
-                    $auteur = $row['auteur'];
-                    $synopsis = $row['synopsis'];
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
-                }
-                elseif( $idSerie !== $row['idSerie']){
-
-                    array_push( $series, new Serie( $titre, $auteur, $synopsis, $mangas));
-                    $mangas = array();
-                    $titre = $row['titre'];
-                    $auteur = $row['auteur'];
-                    $synopsis = $row['synopsis'];
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
-                }
-                else{
-
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
-                }
-
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
                 $idSerie = $row['idSerie'];
+                $titre = $row['titre'];
+                $auteur = $row['auteur'];
+                $synopsis = $row['synopsis'];
+
+                array_push($series, new Serie($idSerie, $titre, $auteur, $synopsis, $mangas));
             }
-            array_push( $series, new Serie( $titre, $auteur, $synopsis, $mangas));
+
             return $series;
-
         }
-        else{
-            return array();
+        else
+        {
+            return null;
         }
-
     }
 
     public function update($id, Serie $s)
