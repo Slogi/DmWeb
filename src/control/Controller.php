@@ -23,16 +23,16 @@ class Controller
     public function mangaPage($serieId, $tomeId) {
 
         $infoSerie = $this->seriedb->read($serieId);
-        $infoManga = $this->mangadb->read($tomeId);
+        $infoManga = $this->mangadb->read($serieId,$tomeId);
         //$manga = new Serie("titre", "auteur", "synopsis", "nbTomes", "mangas");
         //$manga = $this->mangadb->read($id);
 
         if ($infoManga === null || $infoSerie === null) {
-            echo 'aaa';
+
             /* La couleur n'existe pas en BD */
             //$this->v->makeUnknownColorPage();
         } else {
-            echo 'bbb';
+
             /* La couleur existe, on prépare la page */
             $this->view->makeMangaPage($infoSerie, $infoManga);
         }

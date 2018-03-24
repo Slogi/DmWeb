@@ -10,10 +10,11 @@ class Router
 
 
 
-    public function __construct( SerieStorage $serieStor)
+    public function __construct($db)
 
     {
-        $this->serieStor = $serieStor;
+               $this->db = $db;
+
     }
 
 
@@ -22,7 +23,12 @@ class Router
     public function main() {
 
         $view = new View($this);
-        $ctrl = new Controller($view);
+        $mangadb = new MangaStorageImpl($this->db);
+        $seriedb = new SerieStorageImpl($this->db, $mangadb);
+
+
+
+        $ctrl = new Controller($view, $mangadb, $seriedb);
 
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
@@ -35,15 +41,23 @@ class Router
             /* Pas d'action demandée : par défaut on affiche
                * la page d'accueil, sauf si une couleur est demandée,
                * auquel cas on affiche sa page. */
-            $action = ($serieId === null) ? "accueil" : "voir";
+            $action = ($serieId === null && $tomeId === null) ? "accueil" : "voir";
         }
 
         if ($action != null) {
             switch ($action) {
                 case "voir":
                     if($serieId != null && $tomeId != null){
+                        //echo $serieId;
+                        //echo $tomeId;
                         $ctrl->mangaPage($serieId, $tomeId);
                     }
+                    if($serieId === null && $tomeId != null){
+                        //echo $serieId;
+                        //echo $tomeId;
+                        $view->makeUnknownActionPage();
+                    }
+
                     //$ctrl->mangaPage($mangaId);
 
             }

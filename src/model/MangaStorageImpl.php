@@ -5,6 +5,7 @@
  * Date: 24/03/2018
  * Time: 12:15
  */
+require_once ("model/MangaStorage.php");
 
 class MangaStorageImpl implements MangaStorage
 {

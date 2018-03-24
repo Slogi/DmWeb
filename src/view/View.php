@@ -29,12 +29,17 @@ class View
 
     public function makeMangaPage(Serie $s, Manga $m) {
         $sTitre = self::htmlesc($s->getTitre());
+        $sAuteur = self::htmlesc($s->getAuteur());
+        $sSynopsis = self::htmlesc($s->getSynopsis());
         $mNumTome = self::htmlesc($m->getNumTome());
+        $mResume = self::htmlesc($m->getResume());
+        $mDateParu = self::htmlesc($m->getDateParu());
 
         include("templateManga.php");
+    }
 
-
-
+    public function makeUnknownActionPage() {
+        include("template404.php");
     }
 
     public function render() {
