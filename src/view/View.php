@@ -27,10 +27,11 @@ class View
         $this->content = "Test du content";
     }
 
-    public function makeMangaPage($id, Serie $s) {
-        $stitre = self::htmlesc($s->getTitre());
-        $sauteur = self::htmlesc($s->getAuteur());
-        include("templateSerie.php");
+    public function makeMangaPage(Serie $s, Manga $m) {
+        $sTitre = self::htmlesc($s->getTitre());
+        $mNumTome = self::htmlesc($m->getNumTome());
+
+        include("templateManga.php");
 
 
 
