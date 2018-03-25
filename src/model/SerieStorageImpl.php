@@ -66,6 +66,9 @@ class SerieStorageImpl implements SerieStorage
                   FROM listeserie l
                   join serie s on l.idSerie = s.idSerie
                   WHERE pseudo = '$pseudo'";
+        //var_dump($query);
+
+
 
         $stmt = $this->db->prepare($query);
 
@@ -94,6 +97,7 @@ class SerieStorageImpl implements SerieStorage
         {
             return null;
         }
+
     }
 
     public function readAll()
