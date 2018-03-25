@@ -8,6 +8,7 @@
 <body>
 
 <main>
+    <h1> <?php echo  $userPseudo ; ?></h1>
     <ul>
         <?php echo  $content ; ?>
     </ul>

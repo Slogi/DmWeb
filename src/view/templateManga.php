@@ -8,6 +8,7 @@
 <body>
 
 <main>
+    <h1><?php echo  $userPseudo ; ?></h1>
     <h1><?php echo  'Manga : ' . $sTitre . ' Tome : ' . $mNumTome ; ?></h1>
     <p><?php echo 'Appartient à la série : '  .$sTitre; ?></p>
     <p><?php echo 'Synopsis : ' . $sSynopsis; ?></p>
