@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        body {
+            margin:auto;
+            padding: 0;
+        }
+
+        .nav ul {
+            border-radius: 25px;
+            list-style: none;
+            background-color: #444;
+            text-align: center;
+            overflow: auto;
+            width: 600px;
+            padding: 0 auto;
+            margin: 0 auto;
+        }
+        .nav li {
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.2em;
+            line-height: 40px;
+            height: 40px;
+            border-bottom: 1px solid #888;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #C1FBF9;
+            display: block;
+            transition: .3s background-color;
+        }
+
+        img {
+            width : 100%;
+            height : 150px;
+            margin : 0;
+            padding: 0;
+        }
+
+        @media screen and (min-width: 600px) {
+            .nav li {
+                width: 120px;
+                border-bottom: none;
+                height: 50px;
+                line-height: 50px;
+                font-size: 1.4em;
+            }
+
+            .nav li {
+                display: inline-block;
+                margin-right: -4px;
+            }
+            .nav {
+                border-radius: 25px;
+                background-color: #FEF7D4;
+            }
+        }
+    </style>
+</head>
+<body class="news">
+<header>
+    <div class="nav">
+        <img src="../../img/banner.png" />
+        <ul>
+            <li class="Accueil"><a href="#">Accueil</a></li>
+            <li class="Mon Profil"><a href="#">Mon Profil</a></li>
+            <li class="A propos"><a href="#">A propos</a></li>
+        </ul>
+    </div>
+</header>
+</body>
+</html>
