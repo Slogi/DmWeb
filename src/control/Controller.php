@@ -20,7 +20,9 @@ class Controller
         $this->seriedb = $seriedb;
     }
 
-    public function mangaPage($serieId, $tomeId) {
+    public function mangaPage($user, $serieId, $tomeId) {
+
+        //$infoUser = $this->seriedb->read($serieId);
 
         $infoSerie = $this->seriedb->read($serieId);
         $infoManga = $this->mangadb->read($serieId,$tomeId);
@@ -39,12 +41,33 @@ class Controller
 
     }
 
-    public function seriePage($serieId) {
+    public function seriePage($user, $serieId) {
         $infoSerie = $this->seriedb->read($serieId);
         if ($infoSerie === null) {
             //ERREUR SERIE PAS EN BDD
         }
         else $this->view->makeSeriePage($infoSerie);
+    }
+
+    public function userPage($userPseudo) {
+        //echo $userPseudo;
+        $infoUser = $this->seriedb->readAllUser($userPseudo);
+        //var_dump($infoUser);
+
+        if ($infoUser === null) {
+            echo 'infoUser = null';
+            //ERREUR SERIE PAS EN BDD
+        }
+        else {
+            //var_dump($infoUser) ;
+            $this->view->makeUserPage($infoUser);
+
+        }
+
+
+
+
+
     }
 
 }

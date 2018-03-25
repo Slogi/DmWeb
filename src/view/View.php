@@ -45,12 +45,38 @@ class View
 
         //$this->content .= "<ul>\n";
         foreach ($listeMangas as $m) {
-            $this->content .= $this->listeMangas($m, $s);
+            $content .= $this->listeMangas($m, $s);
         }
         //$this->content .= "</ul>\n";
 
         include("templateSerie.php");
     }
+
+    public function makeUserPage($infoUser) {
+        $content = $this->content;
+        //var_dump($infoUser);
+        //$content .= 'aaaaa';
+
+        foreach ($infoUser as $serie){
+            $content .= $this->listeSeries($serie);
+            //echo $serie->getTitre();
+            //echo $serie;
+
+        }
+
+        include("templateUser.php");
+
+    }
+
+    protected function listeSeries($serie) {
+        //echo $serie->getTitre();
+        $res = '<li><a href="" >';
+        $res .= '<h3>'. $serie->getTitre().'</h3>';
+        $res .= '</a></li>'."\n";
+        return $res;
+    }
+
+
 
     protected function listeMangas($m, $s) {
 

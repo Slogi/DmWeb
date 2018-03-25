@@ -25,6 +25,11 @@ class Router
 
         $ctrl = new Controller($view, $mangadb, $seriedb);
 
+       // echo $_GET['pseudo'];
+       // echo $_GET['serie'];
+       // echo $_GET['tome'];
+
+        $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
 
@@ -40,25 +45,31 @@ class Router
             $action = ($mangaId === null)? "accueil": "voir";
 
                * auquel cas on affiche sa page. */
-            $action = ($serieId === null && $tomeId === null) ? "accueil" : "voir";
+            $action = ($userPseudo === null && $serieId === null && $tomeId === null) ? "accueil" : "voir";
+            //echo $action;
 
         }
 
         if ($action != null) {
             switch ($action) {
                 case "voir":
-                    if($serieId !== null && $tomeId !== null){
+                    if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
                         //echo $serieId;
                         //echo $tomeId;
-                        $ctrl->mangaPage($serieId, $tomeId);
+                        $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
                     }
                     if($serieId === null && $tomeId !== null){
                         //echo $serieId;
                         //echo $tomeId;
                         $view->makeUnknownActionPage();
                     }
-                    if($serieId !== null && $tomeId === null){
-                        $ctrl->seriePage($serieId);
+                    if($userPseudo !== null && $serieId !== null && $tomeId === null){
+                        $ctrl->seriePage($userPseudo, $serieId);
+                    }
+                    if($userPseudo !== null && $serieId === null && $tomeId === null){
+                        //echo 'aaa';
+                        //echo $userPseudo;
+                        $ctrl->userPage($userPseudo);
                     }
 
                     //$ctrl->mangaPage($mangaId);
