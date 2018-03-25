@@ -54,18 +54,37 @@ class View
 
     public function makeUserPage($userPseudo, $infoUser) {
         $content = $this->content;
-        //var_dump($infoUser);
-        //$content .= 'aaaaa';
-
         foreach ($infoUser as $serie){
             $content .= $this->listeSeries($userPseudo, $serie);
-            //echo $serie->getTitre();
-            //echo $serie;
-
         }
-
         include("templateUser.php");
+    }
 
+    public function makeAllUsersWithSeriesPage($allUsersWithSeries){
+        $content = $this->content;
+        foreach ($allUsersWithSeries as $user => $series){
+
+            echo '<ul>';
+            echo '<li>';
+            echo '<a href="'.$this->router->userPage($user).'">';
+            echo '<h3>' . $user . '</h3>';
+            echo '</a>';
+            echo '<ul>';
+
+            foreach ($series as $serie){
+                $titreSerie = self::htmlesc($serie->getTitre());;
+                $serieId = self::htmlesc($serie->getIdSerie());;
+                echo '<li>';
+                echo '<a href="'.$this->router->seriePage($user, $serieId).'">';
+                echo '<h4>'.$titreSerie. '</h4>';
+                echo '</a>';
+                echo '</li>';
+            }
+
+            echo '</ul>';
+            echo '</li>';
+            echo '</ul>';
+        }
     }
 
     protected function listeSeries($userPseudo, $serie) {
