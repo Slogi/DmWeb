@@ -27,7 +27,7 @@ class View
         $this->content = "Test du content";
     }
 
-    public function makeMangaPage(Serie $s, Manga $m) {
+    public function makeMangaPage($userPseudo, Serie $s, Manga $m) {
         $sTitre = self::htmlesc($s->getTitre());
         $sAuteur = self::htmlesc($s->getAuteur());
         $sSynopsis = self::htmlesc($s->getSynopsis());
@@ -38,27 +38,27 @@ class View
         include("templateManga.php");
     }
 
-    public function makeSeriePage(Serie $s) {
+    public function makeSeriePage($userPseudo, Serie $s) {
         $sTitre = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
         $content = $this->content;
 
         //$this->content .= "<ul>\n";
         foreach ($listeMangas as $m) {
-            $content .= $this->listeMangas($m, $s);
+            $content .= $this->listeMangas($userPseudo, $m, $s);
         }
         //$this->content .= "</ul>\n";
 
         include("templateSerie.php");
     }
 
-    public function makeUserPage($infoUser) {
+    public function makeUserPage($userPseudo, $infoUser) {
         $content = $this->content;
         //var_dump($infoUser);
         //$content .= 'aaaaa';
 
         foreach ($infoUser as $serie){
-            $content .= $this->listeSeries($serie);
+            $content .= $this->listeSeries($userPseudo, $serie);
             //echo $serie->getTitre();
             //echo $serie;
 
@@ -68,22 +68,22 @@ class View
 
     }
 
-    protected function listeSeries($serie) {
+    protected function listeSeries($userPseudo, $serie) {
+        //$userPseudo = self::htmlesc($infoUser->get());
+        $serieId = self::htmlesc($serie->getIdSerie());
         //echo $serie->getTitre();
-        $res = '<li><a href="" >';
+
+        $res = '<li><a href="'.$this->router->seriePage($userPseudo, $serieId).'" >';
         $res .= '<h3>'. $serie->getTitre().'</h3>';
         $res .= '</a></li>'."\n";
         return $res;
     }
 
-
-
-    protected function listeMangas($m, $s) {
-
+    protected function listeMangas($userPseudo, $m, $s) {
         $sId = self::htmlesc($s->getIdSerie());
         $mNumTome = self::htmlesc($m->getNumTome());
 
-        $res = '<li><a href="'.$this->router->mangaPage($sId, $mNumTome).'" >';
+        $res = '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
         $res .= '<h3>'. $s->getTitre().' Tome '. $m->getNumTome().'</h3>';
         $res .= '</a></li>'."\n";
         return $res;
