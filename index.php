@@ -9,7 +9,7 @@ require_once("Router.php");
 $database = new Connexion();
 $db = $database->getConnection();
 
-$r = new Router( new SerieStorageImpl($db, new MangaStorageImpl($db)));
+$r = new Router($db);
 
 $r->main();
 

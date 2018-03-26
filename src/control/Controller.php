@@ -21,15 +21,11 @@ class Controller
     }
 
     public function mangaPage($userPseudo, $serieId, $tomeId) {
-
-        //$infoUser = $this->seriedb->read($serieId);
-
         $infoSerie = $this->seriedb->read($serieId);
         $infoManga = $this->mangadb->read($serieId,$tomeId);
-        //$manga = new Serie("titre", "auteur", "synopsis", "nbTomes", "mangas");
-        //$manga = $this->mangadb->read($id);
 
-        if ($infoManga === null || $infoSerie === null) {
+        if ($userPseudo === null || $infoManga === null || $infoSerie === null) {
+            $this->view->makeUnknownActionPage();
 
             /* La couleur n'existe pas en BD */
             //$this->v->makeUnknownColorPage();
@@ -43,7 +39,8 @@ class Controller
 
     public function seriePage($userPseudo, $serieId) {
         $infoSerie = $this->seriedb->read($serieId);
-        if ($infoSerie === null) {
+        if ($userPseudo === null || $infoSerie === null) {
+            $this->view->makeUnknownActionPage();
             //ERREUR SERIE PAS EN BDD
         }
         else $this->view->makeSeriePage($userPseudo, $infoSerie);
@@ -54,8 +51,8 @@ class Controller
         $infoUser = $this->seriedb->readAllUser($userPseudo);
         //var_dump($infoUser);
 
-        if ($infoUser === null) {
-            echo 'infoUser = null';
+        if ($userPseudo === null || $infoUser === null) {
+            $this->view->makeUnknownActionPage();
             //ERREUR SERIE PAS EN BDD
         }
         else $this->view->makeUserPage($userPseudo, $infoUser);
@@ -66,12 +63,9 @@ class Controller
     public function allUsersWithSeriesPage() {
         $allUsersWithSeries = $this->seriedb->readAll();
         if ($allUsersWithSeries === null) {
-            echo 'infoUser = null';
+            $this->view->makeUnknownActionPage();
             //ERREUR SERIE PAS EN BDD
         }
         else $this->view->makeAllUsersWithSeriesPage($allUsersWithSeries);
-
-
     }
-
 }
