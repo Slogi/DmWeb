@@ -10,11 +10,8 @@ class Router
 
 
 
-    public function __construct($db)
-
-    {
+    public function __construct($db){
                $this->db = $db;
-
     }
 
     public function main() {
@@ -28,10 +25,15 @@ class Router
 
         $ctrl = new Controller($view, $mangadb, $seriedb);
 
+       // echo $_GET['pseudo'];
+       // echo $_GET['serie'];
+       // echo $_GET['tome'];
+
+        $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
 
-        $mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
+        //$mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
 
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
 
@@ -43,26 +45,39 @@ class Router
             $action = ($mangaId === null)? "accueil": "voir";
 
                * auquel cas on affiche sa page. */
-            $action = ($serieId === null && $tomeId === null) ? "accueil" : "voir";
+            $action = ($userPseudo === null && $serieId === null && $tomeId === null) ? "accueil" : "voir";
+            //echo $action;
 
         }
 
         if ($action != null) {
             switch ($action) {
                 case "voir":
-                    if($serieId !== null && $tomeId !== null){
+                    if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
                         //echo $serieId;
                         //echo $tomeId;
-                        $ctrl->mangaPage($serieId, $tomeId);
+                        $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
                     }
-                    if($serieId === null && $tomeId !== null){
-                        //echo $serieId;
-                        //echo $tomeId;
+                    elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
+                        $ctrl->seriePage($userPseudo, $serieId);
+                    }
+                    elseif($userPseudo !== null && $serieId === null && $tomeId === null){
+                        //echo 'aaa';
+                        //echo $userPseudo;
+                        $ctrl->userPage($userPseudo);
+                    }
+                    else {
                         $view->makeUnknownActionPage();
                     }
-                    if($serieId !== null && $tomeId === null){
-                        $ctrl->seriePage($serieId);
+                    break;
+                case "accueil":
+                    $ctrl->allUsersWithSeriesPage();
+
                     }
+
+
+
+
 
                     //$ctrl->mangaPage($mangaId);
 
@@ -70,13 +85,21 @@ class Router
 
         }
 
-        }
+        
 
 
 
 
-    public function mangaPage($serieId, $tomeId) {
-        return ".?serie=$serieId&tome=$tomeId";
+    public function mangaPage($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId";
+    }
+
+    public function seriePage($userPseudo, $serieId) {
+        return ".?pseudo=$userPseudo&serie=$serieId";
+    }
+
+    public function userPage($userPseudo) {
+        return ".?pseudo=$userPseudo";
     }
 
 }
