@@ -6,6 +6,7 @@ require_once("model/SerieStorageImpl.php");
 require_once("Connexion.php");
 require_once("Router.php");
 
+
 $database = new Connexion();
 $db = $database->getConnection();
 

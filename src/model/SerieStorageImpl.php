@@ -15,9 +15,20 @@ class SerieStorageImpl implements SerieStorage
         $this->mangaSto = $mangaSto;
     }
 
-    public function create(Serie $s)
+    public function create(Serie $s, $user)
     {
-        // TODO: Implement create() method.
+        $query = "INSERT INTO table_name ('titre', 'auteur', 'synopsis')
+                  VALUES ($this->$s->getTitre(), $this->$s->getAuteur() , $this->$s->getSynopsis())";
+
+        $stmt = $this->db->prepare($query);
+
+        if ( $this->db->exec($stmt)=== true ){
+            $idS = $this->db->lastInsertId();
+
+            return $idS;
+        };
+        
+        return null;
     }
 
     /**
