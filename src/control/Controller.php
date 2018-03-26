@@ -58,14 +58,18 @@ class Controller
             echo 'infoUser = null';
             //ERREUR SERIE PAS EN BDD
         }
-        else {
-            //var_dump($infoUser) ;
-            $this->view->makeUserPage($userPseudo, $infoUser);
+        else $this->view->makeUserPage($userPseudo, $infoUser);
 
+
+    }
+
+    public function allUsersWithSeriesPage() {
+        $allUsersWithSeries = $this->seriedb->readAll();
+        if ($allUsersWithSeries === null) {
+            echo 'infoUser = null';
+            //ERREUR SERIE PAS EN BDD
         }
-
-
-
+        else $this->view->makeAllUsersWithSeriesPage($allUsersWithSeries);
 
 
     }

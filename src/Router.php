@@ -58,16 +58,24 @@ class Router
                         //echo $tomeId;
                         $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
                     }
-                    if($userPseudo !== null && $serieId !== null && $tomeId === null){
+                    elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
                         $ctrl->seriePage($userPseudo, $serieId);
                     }
-                    if($userPseudo !== null && $serieId === null && $tomeId === null){
+                    elseif($userPseudo !== null && $serieId === null && $tomeId === null){
                         //echo 'aaa';
                         //echo $userPseudo;
                         $ctrl->userPage($userPseudo);
                     }
-                    else $view->makeUnknownActionPage();
+                    else {
+                        $view->makeUnknownActionPage();
                     }
+                    break;
+                case "accueil":
+                    $ctrl->allUsersWithSeriesPage();
+
+                    }
+
+
 
 
 
@@ -88,6 +96,10 @@ class Router
 
     public function seriePage($userPseudo, $serieId) {
         return ".?pseudo=$userPseudo&serie=$serieId";
+    }
+
+    public function userPage($userPseudo) {
+        return ".?pseudo=$userPseudo";
     }
 
 }
