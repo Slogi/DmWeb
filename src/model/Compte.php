@@ -11,10 +11,13 @@ class Compte
     protected $genre;
     protected $statut;
 
-    public function __construct($pseudo, $mdp)
+    public function __construct($pseudo, $nom, $prenom, $dateBirth, $genre)
     {
         $this->pseudo = $pseudo;
-        $this->mdp = $mdp;
+        $this->nom = $nom;
+        $this->prenom = $prenom;
+        $this->dateBirth = $dateBirth;
+        $this->genre = $genre;
     }
 
 }

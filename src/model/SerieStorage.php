@@ -4,7 +4,7 @@ require_once ("model/Serie.php");
 
 interface SerieStorage
 {
-    public function create(Serie $s);
+    public function create(Serie $s, $user);
 
     public function read($id);
 

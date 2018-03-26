@@ -14,7 +14,7 @@ class CompteStorageStub implements CompteStorage
 
     public function checkAuth($pseudo, $password)
     {
-        $query = "SELECT pseudo, mdp 
+        $query = "SELECT pseudo, mdp, nom, prenom, dateBirth, genre 
                   FROM compte";
 
         $stmt = $this->db->prepare($query);
@@ -29,7 +29,7 @@ class CompteStorageStub implements CompteStorage
             {
                 if ( $row['pseudo'] == $pseudo && $row['mdp'] == $password)
                 {
-                    return new Compte($row['pseudo'], $row['mdp']);
+                    return new Compte($row['pseudo'], $row['nom'], $row['prenom'], $row['dateBirth'], $row['genre']);
                 }
             }
             return null;
