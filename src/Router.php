@@ -72,6 +72,13 @@ class Router
                     break;
                 case "accueil":
                     $ctrl->allUsersWithSeriesPage();
+                    break;
+                case "creerSerie" :
+                    $ctrl->newSerie();
+                    break;
+                case "sauverNouvelleSerie" :
+                    $serieId = $ctrl->saveNewSerie($_POST);
+                    break;
 
                     }
 
@@ -101,5 +108,10 @@ class Router
     public function userPage($userPseudo) {
         return ".?pseudo=$userPseudo";
     }
+
+    public function saveCreatedSerie() {
+        return ".?action=sauverNouvelleSerie";
+    }
+
 
 }

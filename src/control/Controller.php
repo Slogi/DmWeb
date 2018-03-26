@@ -68,4 +68,25 @@ class Controller
         }
         else $this->view->makeAllUsersWithSeriesPage($allUsersWithSeries);
     }
+
+    public function newSerie() {
+        $sb = new SerieBuilder();
+        $this->view->makeSerieCreationPage($sb);
+    }
+
+    public function saveNewSerie(array $data) {
+        $sb = new SerieBuilder($data);
+        if ($sb->isValid()){
+            $serie = $sb->createSerie();
+            $serieId = $this->seriedb->create($serie);
+
+            //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
+            //$this->v->makeColorPage($colorId, $color);
+
+
+        }
+        else {
+            $this->v->makeSerieCreationPage($sb);
+        }
+    }
 }
