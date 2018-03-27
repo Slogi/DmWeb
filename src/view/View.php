@@ -9,7 +9,6 @@ require_once("Router.php");
 
 class View
 {
-
     protected $router;
     protected $style;
     protected $title;
@@ -104,6 +103,62 @@ class View
 
     }
 
+    public function makeInscriptionPage(CompteBuilder $builder) {
+        echo "makeInscriptionPage";
+        $this->title = "Inscrivez-vous";
+        $s = '<form action="'.$this->router->saveCreatedCompte().'" method="POST">'."\n";
+        $s .= self::getFormInscrit($builder);
+        $s .= "<button>Créer</button>\n";
+        $s .= "</form>\n";
+        $this->content = $s;
+
+    }
+    protected function getFormInscrit( CompteBuilder $builder){
+
+        $pseudoCompteRef = $builder->getPseudoRef();
+        $mdpCompteRef = $builder->getMdpRef();
+        $nomCompteRef = $builder->getNomRef();
+        $prenomCompteRef = $builder->getPrenomRef();
+        $dateBirthCompteRef = $builder->getDateBirthRef();
+        $genreCompteRef = $builder->getGenreRef();
+
+        $s = "<h2>Inscrivez-vous</h2>";
+        $s .="<label>Nom<input name=\"nomCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($nomCompteRef)).'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .= "</label><label>Prenom<input name=\"prenomCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($prenomCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label><label>Date de Naissance<input name=\"dateBirthCompte\" type=\"date\" value=\"";
+        $s .= self::htmlesc($builder->getData($dateBirthCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label><label>Homme<input type=\"radio\" checked=\"checked\" id=\"homme\" name=\"genreCompte\" value=\"homme\">";
+        $s .="</label><label>Femme<input type=\"radio\" id=\"femme\" name=\"genreCompte\" value=\"femme\">";
+        $s .="</label><label>Autre<input type=\"radio\" name=\"genreCompte\" id=\"autre\" value=\"autre\">";
+        $s .="</label><label>Pseudo<input name=\"pseudoCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($pseudoCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label><label>Mot de passe<input name=\"mdpCompte\" type=\"password\" value=\"";
+        $s .= self::htmlesc($builder->getData($mdpCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label>";
+        return $s;
+
+    }
+
     protected function getFormFields(SerieBuilder $builder) {
         echo "formulaire";
         $titreSerieRef = $builder->getTitreRef();
@@ -141,13 +196,6 @@ class View
 
 
     }
-
-
-
-
-
-
-
 
     protected function listeSeries($userPseudo, $serie) {
         //$userPseudo = self::htmlesc($infoUser->get());

@@ -8,17 +8,20 @@
 
 require_once ("model/Serie.php");
 require_once ("model/SerieBuilder.php");
+require_once ("model/CompteBuilder.php");
 
 class Controller
 {
     protected $view;
     protected $mangadb;
     protected $seriedb;
+    protected $comptedb;
 
-    public function __construct(View $v, MangaStorage $mangadb, SerieStorage $seriedb) {
+    public function __construct(View $v, MangaStorage $mangadb, SerieStorage $seriedb, CompteStorage $comptedb) {
         $this->view = $v;
         $this->mangadb = $mangadb;
         $this->seriedb = $seriedb;
+        $this->comptedb = $comptedb;
     }
 
     public function mangaPage($userPseudo, $serieId, $tomeId) {
@@ -88,7 +91,26 @@ class Controller
 
         }
         else {
-            $this->v->makeSerieCreationPage($sb);
+            $this->view->makeSerieCreationPage($sb);
         }
+    }
+
+    public function saveNewCompte(array $data) {
+
+        $cb = new CompteBuilder($data);
+
+        if ($cb->isValid($this->comptedb)){
+            $compte = $cb->createCompte();
+            $pseudo = $this->comptedb->create($compte);
+
+        }
+        else {
+            $this->view->makeInscriptionPage($cb);
+        }
+    }
+
+    public function newCompte() {
+        $cb = new CompteBuilder();
+        $this->view->makeInscriptionPage($cb);
     }
 }
