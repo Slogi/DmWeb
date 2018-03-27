@@ -54,6 +54,10 @@
             font: 16px Arial, Helvetica, sans-serif;
             height: 45px;
         }
+        form input[type="radio"]{
+            width : auto;
+            display: inline-block;
+        }
         form label
         {
             color : #767676;
@@ -80,6 +84,12 @@
         <input id="prenom" type="text">
         <label for="birth">Date de Naissance</label>
         <input id="birth" type="date">
+        <label for="homme">Homme</label>
+        <input type="radio" checked="checked" id="homme" name="radio" value="homme">
+        <label for="femme">Femme</label>
+        <input type="radio" id="femme" name="radio" value="femme">
+        <label for="autre">Autre</label>
+        <input type="radio" name="radio" id="autre">
         <label for="pseudo">Pseudo</label>
         <input id="pseudo" type="text">
         <label for="mdp">Mot de passe</label>
