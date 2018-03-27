@@ -41,15 +41,16 @@ class View
     public function makeSeriePage($userPseudo, Serie $s) {
         $sTitre = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
+        //var_dump($listeMangas);
         $content = $this->content;
 
-        //$this->content .= "<ul>\n";
-        foreach ($listeMangas as $m) {
-            $content .= $this->listeMangas($userPseudo, $m, $s);
+        if($listeMangas !== null ){
+            foreach ($listeMangas as $m) {
+                $content .= $this->listeMangas($userPseudo, $m, $s);
+            }
+            include("templateSerie.php");
         }
-        //$this->content .= "</ul>\n";
-
-        include("templateSerie.php");
+        else  include("templateSerieSansMangas.php");
     }
 
     public function makeUserPage($userPseudo, $infoUser) {

@@ -17,7 +17,6 @@ class SerieStorageImpl implements SerieStorage
 
     public function create(Serie $s, $user)
     {
-
         $query = "INSERT INTO serie (titre, auteur, synopsis)
                                   VALUES (?, ?, ?)";
 
@@ -31,9 +30,16 @@ class SerieStorageImpl implements SerieStorage
         if ( $stmt->execute()=== true ){
             $idS = $this->db->lastInsertId();
 
+            $query1 = "INSERT INTO listeserie (pseudo, idSerie)
+                       VALUES ( '".$user."', '".$idS."' )";
+
+            $stmt1 = $this->db->prepare($query1);
+
+            $stmt1->execute();
+
             return $idS;
         };
-        
+
         return null;
     }
 
