@@ -17,12 +17,18 @@ class SerieStorageImpl implements SerieStorage
 
     public function create(Serie $s, $user)
     {
-        $query = "INSERT INTO table_name ('titre', 'auteur', 'synopsis')
-                  VALUES ($this->$s->getTitre(), $this->$s->getAuteur() , $this->$s->getSynopsis())";
+
+        $query = "INSERT INTO serie (titre, auteur, synopsis)
+                                  VALUES (?, ?, ?)";
 
         $stmt = $this->db->prepare($query);
 
-        if ( $this->db->exec($stmt)=== true ){
+        $stmt->bindValue(1, $s->getTitre() );
+        $stmt->bindValue(2, $s->getAuteur() );
+        $stmt->bindValue(3, $s->getSynopsis() );
+
+
+        if ( $stmt->execute()=== true ){
             $idS = $this->db->lastInsertId();
 
             return $idS;

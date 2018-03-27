@@ -92,7 +92,9 @@ class View
     }
 
     public function makeSerieCreationPage(SerieBuilder $builder) {
+        echo "makeSerieCreationPage";
         $this->title = "Ajouter votre série";
+        //$s = '<form action="" method="POST">'."\n";
         $s = '<form action="'.$this->router->saveCreatedSerie().'" method="POST">'."\n";
         $s .= self::getFormFields($builder);
         $s .= "<button>Créer</button>\n";
@@ -102,10 +104,12 @@ class View
     }
 
     protected function getFormFields(SerieBuilder $builder) {
+        echo "formulaire";
         $titreSerieRef = $builder->getTitreRef();
         $s = "";
         $s .= '<p><label>Titre de la Serie : <input type="text" name="'.$titreSerieRef.'" value="';
         $s .= self::htmlesc($builder->getData($titreSerieRef));
+        //echo self::htmlesc($builder->getData($titreSerieRef));
         $s .= "\" />";
         $err = $builder->getErrors($titreSerieRef);
         if ($err !== null)
@@ -115,6 +119,7 @@ class View
         $auteurSerieRef = $builder->getAuteurRef();
         $s .= '<p><label>Auteur de la série : <input type="text" name="'.$auteurSerieRef.'" value="';
         $s .= self::htmlesc($builder->getData($auteurSerieRef));
+        //echo self::htmlesc($builder->getData($auteurSerieRef));
         $s .= "\" />";
         $err = $builder->getErrors($auteurSerieRef);
         if ($err !== null)
@@ -124,6 +129,7 @@ class View
         $resumeSerieRef = $builder->getResumeRef();
         $s .= '<p><label>Résumé de la série : <input type="text" name="'.$resumeSerieRef.'" value="';
         $s .= self::htmlesc($builder->getData($resumeSerieRef));
+        //echo self::htmlesc($builder->getData($resumeSerieRef));
         $s .= "\" />";
         $err = $builder->getErrors($resumeSerieRef);
         if ($err !== null)
@@ -179,12 +185,14 @@ class View
 
 
     public function render() {
+        echo $this->title;
+        echo $this->content;
         if ($this->title === null || $this->content === null) {
             //$this->makeUnexpectedErrorPage();
         }
         $title = $this->title;
         $content = $this->content;
 
-        include("templateTest.php");
+        //include("templateTest.php");
     }
 }

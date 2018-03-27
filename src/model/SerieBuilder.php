@@ -47,8 +47,10 @@ class SerieBuilder{
     }
 
     public function createSerie() {
-        if (!key_exists("titreSerie", $this->data) || !key_exists("auteurSerie", $this->data))
-            throw new Exception("Missing fields for serie creation");
+        if (!key_exists("titreSerie", $this->data) || !key_exists("auteurSerie", $this->data)){
+            echo 'exception';
+            //throw new Exception("Missing fields for serie creation");
+        }
         return new Serie("0", $this->data["titreSerie"], $this->data["auteurSerie"], $this->data["resumeSerie"], null);
     }
 
@@ -72,6 +74,19 @@ class SerieBuilder{
 
     public function getErrors($ref) {
         return key_exists($ref, $this->errors)? $this->errors[$ref]: null;
+    }
+
+    public static function htmlesc($str) {
+        return htmlspecialchars($str,
+            /* on échappe guillemets _et_ apostrophes : */
+            ENT_QUOTES
+            /* les séquences UTF-8 invalides sont
+            * remplacées par le caractère �
+            * au lieu de renvoyer la chaîne vide…) */
+            | ENT_SUBSTITUTE
+            /* on utilise les entités HTML5 (en particulier &apos;) */
+            | ENT_HTML5,
+            'UTF-8');
     }
 
 

@@ -7,6 +7,7 @@
  */
 
 require_once ("model/Serie.php");
+require_once ("model/SerieBuilder.php");
 
 class Controller
 {
@@ -70,6 +71,7 @@ class Controller
     }
 
     public function newSerie() {
+        echo "newSerie";
         $sb = new SerieBuilder();
         $this->view->makeSerieCreationPage($sb);
     }
@@ -78,7 +80,7 @@ class Controller
         $sb = new SerieBuilder($data);
         if ($sb->isValid()){
             $serie = $sb->createSerie();
-            $serieId = $this->seriedb->create($serie);
+            $serieId = $this->seriedb->create($serie, "user1");
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
