@@ -22,9 +22,9 @@ class SerieStorageImpl implements SerieStorage
 
         $stmt = $this->db->prepare($query);
 
-        $query->bindValue(1, $s->getTitre() );
-        $query->bindValue(2, $s->getAuteur() );
-        $query->bindValue(3, $s->getSynopsis() );
+        $stmt->bindValue(1, $s->getTitre() );
+        $stmt->bindValue(2, $s->getAuteur() );
+        $stmt->bindValue(3, $s->getSynopsis() );
 
 
         if ( $stmt->execute()=== true ){

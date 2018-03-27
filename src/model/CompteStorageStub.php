@@ -27,7 +27,7 @@ class CompteStorageStub implements CompteStorage
         {
             while($row = $stmt->fetch(PDO::FETCH_ASSOC))
             {
-                if ( $row['pseudo'] == $pseudo && $row['mdp'] == $password)
+                if ( $row['pseudo'] == $pseudo && password_verify($password, $row['mdp']))
                 {
                     return new Compte($row['pseudo'], $row['nom'], $row['prenom'], $row['dateBirth'], $row['genre']);
                 }
