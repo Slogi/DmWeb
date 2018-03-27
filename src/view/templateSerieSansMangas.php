@@ -10,9 +10,7 @@
 <main>
     <h1> <?php echo  $userPseudo ; ?></h1>
     <h2><?php echo  $sTitre ; ?></h2>
-    <ul>
-        <?php echo  $content ; ?>
-    </ul>
+
 
 
 

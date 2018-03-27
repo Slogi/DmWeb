@@ -39,7 +39,7 @@ class SerieStorageImpl implements SerieStorage
 
             return $idS;
         };
-        
+
         return null;
     }
 

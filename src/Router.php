@@ -50,30 +50,46 @@ class Router
 
         }
 
-        if ($action != null) {
-            switch ($action) {
-                case "voir":
-                    if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
-                        //echo $serieId;
-                        //echo $tomeId;
-                        $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
-                    }
-                    elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
-                        $ctrl->seriePage($userPseudo, $serieId);
-                    }
-                    elseif($userPseudo !== null && $serieId === null && $tomeId === null){
-                        //echo 'aaa';
-                        //echo $userPseudo;
-                        $ctrl->userPage($userPseudo);
-                    }
-                    else {
-                        $view->makeUnknownActionPage();
-                    }
-                    break;
-                case "accueil":
-                    $ctrl->allUsersWithSeriesPage();
 
-                    }
+            try{
+                switch ($action) {
+                    case "voir":
+                        if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
+                            //echo $serieId;
+                            //echo $tomeId;
+                            $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
+                        }
+                        elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
+                            $ctrl->seriePage($userPseudo, $serieId);
+                        }
+                        elseif($userPseudo !== null && $serieId === null && $tomeId === null){
+                            //echo 'aaa';
+                            //echo $userPseudo;
+                            $ctrl->userPage($userPseudo);
+                        }
+                        else {
+                            $view->makeUnknownActionPage();
+                        }
+                        break;
+                    case "accueil":
+                        $ctrl->allUsersWithSeriesPage();
+                        break;
+                    case "creerSerie" :
+                        echo $action;
+                        $ctrl->newSerie();
+                        break;
+                    case "sauverNouvelleSerie" :
+                        $serieId = $ctrl->saveNewSerie($_POST);
+                        break;
+
+                }
+            }catch (Exception $e) {
+                echo $e;
+                //$view->makeUnknownActionPage($e);
+            }
+            $view->render();
+
+
 
 
 
@@ -83,7 +99,7 @@ class Router
 
             }
 
-        }
+
 
         
 
@@ -101,5 +117,10 @@ class Router
     public function userPage($userPseudo) {
         return ".?pseudo=$userPseudo";
     }
+
+    public function saveCreatedSerie() {
+        return ".?action=sauverNouvelleSerie";
+    }
+
 
 }

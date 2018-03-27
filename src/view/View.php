@@ -41,15 +41,16 @@ class View
     public function makeSeriePage($userPseudo, Serie $s) {
         $sTitre = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
+        //var_dump($listeMangas);
         $content = $this->content;
 
-        //$this->content .= "<ul>\n";
-        foreach ($listeMangas as $m) {
-            $content .= $this->listeMangas($userPseudo, $m, $s);
+        if($listeMangas !== null ){
+            foreach ($listeMangas as $m) {
+                $content .= $this->listeMangas($userPseudo, $m, $s);
+            }
+            include("templateSerie.php");
         }
-        //$this->content .= "</ul>\n";
-
-        include("templateSerie.php");
+        else  include("templateSerieSansMangas.php");
     }
 
     public function makeUserPage($userPseudo, $infoUser) {
@@ -87,6 +88,67 @@ class View
         }
     }
 
+    public function makeUnknownActionPage() {
+        include("template404.php");
+    }
+
+    public function makeSerieCreationPage(SerieBuilder $builder) {
+        echo "makeSerieCreationPage";
+        $this->title = "Ajouter votre série";
+        //$s = '<form action="" method="POST">'."\n";
+        $s = '<form action="'.$this->router->saveCreatedSerie().'" method="POST">'."\n";
+        $s .= self::getFormFields($builder);
+        $s .= "<button>Créer</button>\n";
+        $s .= "</form>\n";
+        $this->content = $s;
+
+    }
+
+    protected function getFormFields(SerieBuilder $builder) {
+        echo "formulaire";
+        $titreSerieRef = $builder->getTitreRef();
+        $s = "";
+        $s .= '<p><label>Titre de la Serie : <input type="text" name="'.$titreSerieRef.'" value="';
+        $s .= self::htmlesc($builder->getData($titreSerieRef));
+        //echo self::htmlesc($builder->getData($titreSerieRef));
+        $s .= "\" />";
+        $err = $builder->getErrors($titreSerieRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label></p>\n";
+
+        $auteurSerieRef = $builder->getAuteurRef();
+        $s .= '<p><label>Auteur de la série : <input type="text" name="'.$auteurSerieRef.'" value="';
+        $s .= self::htmlesc($builder->getData($auteurSerieRef));
+        //echo self::htmlesc($builder->getData($auteurSerieRef));
+        $s .= "\" />";
+        $err = $builder->getErrors($auteurSerieRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .= '</label></p>'."\n";
+
+        $resumeSerieRef = $builder->getResumeRef();
+        $s .= '<p><label>Résumé de la série : <input type="text" name="'.$resumeSerieRef.'" value="';
+        $s .= self::htmlesc($builder->getData($resumeSerieRef));
+        //echo self::htmlesc($builder->getData($resumeSerieRef));
+        $s .= "\" />";
+        $err = $builder->getErrors($resumeSerieRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .= '</label></p>'."\n";
+        return $s;
+
+
+
+    }
+
+
+
+
+
+
+
+
     protected function listeSeries($userPseudo, $serie) {
         //$userPseudo = self::htmlesc($infoUser->get());
         $serieId = self::htmlesc($serie->getIdSerie());
@@ -108,22 +170,6 @@ class View
         return $res;
     }
 
-    public function makeUnknownActionPage() {
-        include("template404.php");
-    }
-
-    public function render() {
-        if ($this->title === null || $this->content === null) {
-            //$this->makeUnexpectedErrorPage();
-        }
-        $title = $this->title;
-        $content = $this->content;
-
-        include("templateTest.php");
-    }
-
-
-
     public static function htmlesc($str) {
         return htmlspecialchars($str,
             /* on échappe guillemets _et_ apostrophes : */
@@ -135,5 +181,19 @@ class View
             /* on utilise les entités HTML5 (en particulier &apos;) */
             | ENT_HTML5,
             'UTF-8');
+    }
+
+
+
+    public function render() {
+        echo $this->title;
+        echo $this->content;
+        if ($this->title === null || $this->content === null) {
+            //$this->makeUnexpectedErrorPage();
+        }
+        $title = $this->title;
+        $content = $this->content;
+
+        //include("templateTest.php");
     }
 }
