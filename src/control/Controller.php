@@ -159,7 +159,7 @@ class Controller
         $mdp = $data['mdp'];
         $compte = $this->comptedb->checkAuth($pseudo, $mdp);
 
-        if ( $compte !== null ){
+        if ( $compte != null ){
 
             $_SESSION['pseudo'] =  $compte->getPseudo();
             $_SESSION['nom'] =  $compte->getNom();
