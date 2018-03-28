@@ -199,7 +199,7 @@ class Controller
         }
     }
 
-    public function confirmMangaDelete( $serieId, $tomeId) {
+    public function confirmMangaDelete($serieId, $tomeId) {
         /* L'utilisateur confirme vouloir supprimer
         * la couleur. On essaie. */
         $ok = $this->mangadb->delete($serieId, $tomeId);
