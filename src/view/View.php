@@ -37,39 +37,47 @@ class View
         $mResume = self::htmlesc($m->getResume());
         $mDateParu = self::htmlesc($m->getDateParu());
 
-        $s .= "<h1>". $userPseudo ."</h1>";
-        $s .="<h1> Manga :  ". $this->title ."  Tome :  ". $mNumTome ." </h1>";
-        $s .="<p> Synopsis :"  . $sSynopsis."</p>";
-        $s .="<p> Auteur : " .$sAuteur . "</p>";
-        $s .="<h3> Résumé :" .$mResume . "</h3>";
-        $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
-        $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
-        $s .="<a href=\"". $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) . "\">Modifier</a>";
-        $this->content = $s;
+        $str = "<h1>". $userPseudo ."</h1>";
+        $str .="<h1> Manga :  ". $this->title ."  Tome :  ". $mNumTome ." </h1>";
+        $str .="<p> Synopsis :"  . $sSynopsis."</p>";
+        $str .="<p> Auteur : " .$sAuteur . "</p>";
+        $str .="<h3> Résumé :" .$mResume . "</h3>";
+        $str .="<h3>Date de parution : ".$mDateParu ."</h3>";
+        if ( key_exists('pseudo',$_SESSION)){
+            $str .="<button><a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a></button>";
+            $str .="<button><a href=\"". $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) . "\">Modifier</a></button>";
+        }
+        $this->content = $str;
     }
 
     public function makeSeriePage($userPseudo, Serie $s) {
         $this->title = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
-
+        $this->style = "./skin/liste.css";
         if($listeMangas !== null ){
-            $this->content .= "<div class=\"card\"><h2>$userPseudo</h2>";
+            $this->content .= "<div class=\"card\"><h2>".$userPseudo."</h2>";
+            $this->content .= "<div class=\"container\">";
             foreach ($listeMangas as $m) {
                 $this->content .= $this->listeMangas($userPseudo, $m, $s);
-                $this->content .= "</div>";
             }
+            $this->content .= "</div>";
         }
         else  {
-            $s = "<h1>".  $userPseudo ."</h1>";
-            $s .="<h2>".  $this->title ."</h2>";
-            $this->content = $s;
+            $str ="<div class=\"card\"><h2>".$userPseudo."</h2>";
+            $str .="<div class=\"container\">";
+            $str .="<h2>".  $this->title ."</h2>";
+            $str .="<p>Aucun Manga dans cette Série</p>";
+            $str .="</div>";
+            $str .="</div>";
+            $this->content = $str;
         }
     }
 
     public function makeUserPage($userPseudo, $infoUser) {
         $this->title = "Liste de ".$userPseudo;
-        $this->content .= "<div class=\"card\"><h2>$userPseudo</h2>";
-
+        $this->style = "./skin/liste.css";
+        $this->content .= "<div class=\"cardGr\"><h2>$userPseudo</h2>";
+        $this->content .= "<div class=\"container\">";
         foreach ($infoUser as $serie){
 
             $this->content .= $this->listeSeries($userPseudo, $serie);
@@ -79,15 +87,15 @@ class View
 
     public function makeAllUsersWithSeriesPage($allUsersWithSeries){
         $this->title="Accueil";
+        $this->style = "./skin/liste.css";
         $s = "";
         foreach ($allUsersWithSeries as $user => $series){
 
-            $s.='<ul>';
-            $s.= '<li>';
-            $s.= '<a href="'.$this->router->userPage($user).'">';
+            $s.= '<div class="card"><a href="'.$this->router->userPage($user).'">';
             $s.= '<h3>' . $user . '</h3>';
             $s.= '</a>';
             $s.= '<ul>';
+            $s.= "<div class=\"container\">";
 
             foreach ($series as $serie){
                 $titreSerie = self::htmlesc($serie->getTitre());;
@@ -98,10 +106,9 @@ class View
                 $s.= '</a>';
                 $s.= '</li>';
             }
-
+            $s.= "</div>";
             $s.= '</ul>';
-            $s.= '</li>';
-            $s.= '</ul>';
+            $s.= "</div>";
         }
         $this->content = $s;
 
@@ -319,23 +326,18 @@ class View
 
         //$userPseudo = self::htmlesc($infoUser->get());
         $serieId = self::htmlesc($serie->getIdSerie());
-        //echo $serie->getTitre();
-        $res ="<div class=\"container\">";
         $res = '<li><a href="'.$this->router->seriePage($userPseudo, $serieId).'" >';
         $res .= $serie->getTitre();
         $res .= '</a></li>'."\n";
-        $res .= '</div>';
         return $res;
     }
 
     protected function listeMangas($userPseudo, Manga $m, Serie $s) {
         $sId = self::htmlesc($s->getIdSerie());
         $mNumTome = self::htmlesc($m->getNumTome());
-        $res ="<div class=\"container\">";
-        $res .= '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
+        $res = '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
         $res .= $s->getTitre().' Tome '. $m->getNumTome();
         $res .= '</a></li>'."\n";
-        $res .= '</div>';
         return $res;
     }
 
