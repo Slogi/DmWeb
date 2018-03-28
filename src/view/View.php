@@ -314,6 +314,18 @@ class View
     }
 
 
+    public function makePageAPropos() {
+
+        $this->title = "A propos";
+        $this->content = "<h1>A Propos</h1>\n";
+        $this->content .= "<p>Réalisé par :</p>";
+        $this->content .= "<ul>
+                                <li>21406184</li>
+                                <li>21306107</li>
+                            </ul>";
+    }
+
+
     public function makeMangaDeletedPage($userPseudo, $serieId) {
         $this->title = "Suppression effectuée";
         $this->content = "<p>Le tome a été correctement supprimé.</p>";

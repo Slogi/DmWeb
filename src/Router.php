@@ -67,6 +67,9 @@ class Router
                 case "accueil":
                     $ctrl->allUsersWithSeriesPage();
                     break;
+                case "aPropos":
+                    $view->makePageAPropos();
+                    break;
                 case "creerSerie" :
                     if ( key_exists('pseudo', $_SESSION))
                         $ctrl->newSerie();
@@ -214,6 +217,10 @@ class Router
 
     public function inscriptionPage(){
         return ".?action=creerCompte";
+    }
+
+    public function pageAPropos(){
+        return ".?action=aPropos";
     }
 
     public function deconnecter(){

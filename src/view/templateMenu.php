@@ -13,7 +13,7 @@
                 <li class="inscript"><a href="<?php echo $this->router->inscriptionPage()?>">Inscription</a></li>
                 <li class="connexion"><a href="<?php echo $this->router->connexionPage()?>">Connexion</a></li>
             <?php } ?>
-            <li class="apropos"><a href="#">A propos</a></li>
+            <li class="apropos"><a href="<?php echo $this->router->pageAPropos()?>">A propos</a></li>
         </ul>
     </div>
 </header>
