@@ -64,6 +64,7 @@ class View
             foreach ($listeMangas as $m) {
                 $this->content .= $this->listeMangas($userPseudo, $m, $s);
             }
+            $this->content .="<button><a href=\"". $this->router->creerManga($userPseudo,$sId) . "\">Ajouter un manga à cette série</a></button></br>";
             $this->content .= "</div>";
         }
         else  {
@@ -73,6 +74,7 @@ class View
             $str .="<p>Aucun Manga dans cette Série</p>";
             $str .= "<a href=\"". $this->router->creerManga($userPseudo,$sId) . "\">Ajouter un manga à cette série</a></br>";
             $str .="</div>";
+            $str .="<button><a href=\"". $this->router->creerManga($userPseudo,$sId) . "\">Ajouter un manga à cette série</a></button></br>";
             $str .="</div>";
             $this->content = $str;
         }

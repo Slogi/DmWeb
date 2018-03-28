@@ -29,8 +29,6 @@ class Controller
         if ($userPseudo === null || $infoManga === null || $infoSerie === null) {
             $this->view->makeUnknownActionPage();
 
-            /* La couleur n'existe pas en BD */
-            //$this->v->makeUnknownColorPage();
         } else {
 
             /* La couleur existe, on prépare la page */
@@ -51,7 +49,6 @@ class Controller
     public function userPage($userPseudo) {
         //echo $userPseudo;
         $infoUser = $this->seriedb->readAllUser($userPseudo);
-        //var_dump($infoUser);
 
         if ($userPseudo === null || $infoUser === null) {
             $this->view->makeUnknownActionPage();
@@ -120,10 +117,8 @@ class Controller
                 }
                 $mangaId = $this->mangadb->create($manga, $idSerie);
                 $this->view->makeMangaCreatedPage($idSerie, $_SESSION['user']);
-
             }
             else {
-
                 $this->view->makeMangaCreationPage($mb, $idSerie);
             }
 
@@ -199,7 +194,7 @@ class Controller
         }
     }
 
-    public function confirmMangaDelete( $serieId, $tomeId) {
+    public function confirmMangaDelete($serieId, $tomeId) {
         /* L'utilisateur confirme vouloir supprimer
         * la couleur. On essaie. */
         $ok = $this->mangadb->delete($serieId, $tomeId);
@@ -216,7 +211,7 @@ class Controller
         if ( $_SESSION['pseudo'] === $this->mangadb->readPseudo($serieId, $tomeId) ){
             $m = $this->mangadb->read($serieId, $tomeId);
             if ($m === null) {
-                $this->view->makeUnknownMangaPage();
+                $this->view->makeMangaDeletedErr2($serieId, $_SESSION['pseudo']);
             } else {
                 /* Extraction des données modifiables */
                 $mf = MangaBuilder::buildFromColor($m);
