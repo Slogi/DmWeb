@@ -158,6 +158,24 @@ class View
         return $s;
 
     }
+    public function makeConnexionForm(){
+
+        $this->title = "Connectez-vous";
+        $s = '<form action="'.$this->router->saveConnexion().'" method="POST">'."\n";
+        $s .= self::getFormConn();
+        $s .= "<button>Créer</button>\n";
+        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=\"#\">inscrivez-vous</a></p>";
+        $s .= "</form>\n";
+        $this->content = $s;
+    }
+    protected function getFormConn(){
+
+        $s = "<label for=\"pseudo\">Pseudo</label>";
+        $s .="<input id=\"pseudo\" name=\"pseudo\" type=\"text\">";
+        $s .="<label for=\"mdp\">Mot de passe</label>";
+        $s .="<input id=\"mdp\" name=\"mdp\" type=\"password\">";
+        return $s;
+    }
 
     protected function getFormFields(SerieBuilder $builder) {
         echo "formulaire";

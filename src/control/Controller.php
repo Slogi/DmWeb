@@ -113,4 +113,24 @@ class Controller
         $cb = new CompteBuilder();
         $this->view->makeInscriptionPage($cb);
     }
+
+    public function connexion (){
+        $this->view->makeConnexionForm();
+    }
+
+    public function saveConn(array $data) {
+
+        $pseudo = $data['pseudo'];
+        $mdp = $data['mdp'];
+        $compte = $this->comptedb->checkAuth($pseudo, $mdp);
+
+        if ( $compte !== null ){
+
+            $_SESSION['user'] =  $compte;
+            echo 'connexion réussie';
+        }
+        else {
+            $this->view->makeConnexionForm();
+        }
+    }
 }

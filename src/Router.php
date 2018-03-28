@@ -5,6 +5,9 @@ require_once ("model/SerieStorage.php");
 require_once("view/View.php");
 require_once("control/Controller.php");
 
+session_name("dmWeb");
+session_start();
+
 class Router
 {
 
@@ -31,6 +34,12 @@ class Router
         //$mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
 
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
+
+
+
+
+
+
 
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
@@ -84,7 +93,14 @@ class Router
 
                     $ctrl->saveNewCompte($_POST);
                     break;
+                case "connexion" :
+                    echo $action;
+                    $ctrl->connexion();
+                    break;
+                case "sauverConnexion" :
 
+                    $ctrl->saveConn($_POST);
+                    break;
 
             }
         }catch (Exception $e) {
@@ -116,4 +132,7 @@ class Router
         return ".?action=sauverNouveauCompte";
     }
 
+    public function saveConnexion() {
+        return ".?action=sauverConnexion";
+    }
 }
