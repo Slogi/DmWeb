@@ -10,9 +10,9 @@
 <?php
 include "templateMenu.php";?>
 <main>
-<?php
-echo $this->content;
-?>
+    <?php
+    echo $this->content;
+    ?>
 </main>
 </body>
 </html>

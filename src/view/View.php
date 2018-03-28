@@ -14,7 +14,8 @@ class View
     protected $title;
     protected $content;
 
-    public function __construct(Router $router) {
+    public function __construct(Router $router, $feedback) {
+        $this->feedback = $feedback;
         $this->router = $router;
         $this->style = "";
         $this->title = null;
@@ -27,65 +28,76 @@ class View
     }
 
     public function makeMangaPage($userPseudo, Serie $s, Manga $m) {
+
         $sId = self::htmlesc($s->getIdSerie());
-        $sTitre = self::htmlesc($s->getTitre());
+        $this->title = self::htmlesc($s->getTitre());
         $sAuteur = self::htmlesc($s->getAuteur());
         $sSynopsis = self::htmlesc($s->getSynopsis());
         $mNumTome = self::htmlesc($m->getNumTome());
         $mResume = self::htmlesc($m->getResume());
         $mDateParu = self::htmlesc($m->getDateParu());
 
-        include("templateManga.php");
+        $s = "<h1>". $userPseudo ."</h1>";
+        $s .="<h1> Manga :  ". $this->title ."  Tome :  ". $mNumTome ." </h1>";
+        $s .="<p> Synopsis :"  . $sSynopsis."</p>";
+        $s .="<p> Auteur : " .$sAuteur . "</p>";
+        $s .="<h3> Résumé :" .$mResume . "</h3>";
+        $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
+        $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
+        $this->content = $s;
     }
 
     public function makeSeriePage($userPseudo, Serie $s) {
-        $sTitre = self::htmlesc($s->getTitre());
+        $this->title = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
-        //var_dump($listeMangas);
-        $content = $this->content;
 
         if($listeMangas !== null ){
             foreach ($listeMangas as $m) {
-                $content .= $this->listeMangas($userPseudo, $m, $s);
+                $this->content .= $this->listeMangas($userPseudo, $m, $s);
             }
-            include("templateSerie.php");
         }
-        else  include("templateSerieSansMangas.php");
+        else  {
+                    $s = "<h1>".  $userPseudo ."</h1>";
+                    $s .="<h2>".  $this->title ."</h2>";
+                    $this->content = $s;
+        }
     }
 
     public function makeUserPage($userPseudo, $infoUser) {
-        $content = $this->content;
+        $this->title = "Liste de ".$userPseudo;
         foreach ($infoUser as $serie){
-            $content .= $this->listeSeries($userPseudo, $serie);
+            $this->content .= $this->listeSeries($userPseudo, $serie);
         }
-        include("templateUser.php");
     }
 
     public function makeAllUsersWithSeriesPage($allUsersWithSeries){
-        $content = $this->content;
+        $this->title="Accueil";
+        $s = "";
         foreach ($allUsersWithSeries as $user => $series){
 
-            echo '<ul>';
-            echo '<li>';
-            echo '<a href="'.$this->router->userPage($user).'">';
-            echo '<h3>' . $user . '</h3>';
-            echo '</a>';
-            echo '<ul>';
+            $s.='<ul>';
+            $s.= '<li>';
+            $s.= '<a href="'.$this->router->userPage($user).'">';
+            $s.= '<h3>' . $user . '</h3>';
+            $s.= '</a>';
+            $s.= '<ul>';
 
             foreach ($series as $serie){
                 $titreSerie = self::htmlesc($serie->getTitre());;
                 $serieId = self::htmlesc($serie->getIdSerie());;
-                echo '<li>';
-                echo '<a href="'.$this->router->seriePage($user, $serieId).'">';
-                echo $titreSerie;
-                echo '</a>';
-                echo '</li>';
+                $s.= '<li>';
+                $s.= '<a href="'.$this->router->seriePage($user, $serieId).'">';
+                $s.= $titreSerie;
+                $s.= '</a>';
+                $s.= '</li>';
             }
 
-            echo '</ul>';
-            echo '</li>';
-            echo '</ul>';
+            $s.= '</ul>';
+            $s.= '</li>';
+            $s.= '</ul>';
         }
+        $this->content = $s;
+
     }
 
     public function makeUnknownActionPage() {
@@ -99,7 +111,7 @@ class View
 
     public function makeSerieCreationPage(SerieBuilder $builder) {
         $this->title = "Ajouter votre série";
-        //$s = '<form action="" method="POST">'."\n";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveCreatedSerie().'" method="POST">'."\n";
         $s .= self::getFormFieldsSerie($builder);
         $s .= "<button>Créer une série</button>\n";
@@ -108,20 +120,24 @@ class View
 
     }
 
-
     public function makeInscriptionPage(CompteBuilder $builder)
     {
-        echo "makeInscriptionPage";
         $this->title = "Inscrivez-vous";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="' . $this->router->saveCreatedCompte() . '" method="POST">' . "\n";
         $s .= self::getFormInscrit($builder);
+        $s .= "<button>S'incrire</button>\n";
+        $s .= "</form>\n";
+        $this->content = $s;
     }
+
+
     public function makeMangaCreationPage(MangaBuilder $builder, $idSerie) {
         $this->title = "Ajouter votre Manga";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveCreatedManga().'" method="POST">'."\n";
         $s .= self::getFormFieldsManga($builder, $idSerie);
         $s .= "<button>Créer un manga</button>\n";
-
         $s .= "</form>\n";
         $this->content = $s;
 
@@ -172,15 +188,20 @@ class View
         return $s;
 
     }
-    public function makeConnexionForm(){
+    public function makeConnexionForm($err=null){
 
         $this->title = "Connectez-vous";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveConnexion().'" method="POST">'."\n";
         $s .= self::getFormConn();
-        $s .= "<button>Créer</button>\n";
-        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=\"#\">inscrivez-vous</a></p>";
+        if ($err !==null){
+            $s .="<span>".$err."</span>";
+        }
+        $s .= "<button>Connexion</button>\n";
+        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=".$this->router->inscriptionPage().">inscrivez-vous</a></p>";
         $s .= "</form>\n";
         $this->content = $s;
+
     }
     protected function getFormConn(){
 
@@ -273,6 +294,7 @@ class View
         $this->content .= "<button>Confirmer</button>\n</form>\n";
     }
 
+
     public function makeMangaDeletedPage($userPseudo, $serieId) {
         $this->title = "Suppression effectuée";
         $this->content = "<p>Le tome a été correctement supprimé.</p>";
@@ -288,15 +310,8 @@ class View
         $this->content .= '</form>'."\n";
     }
 
+    protected function listeSeries($userPseudo, Serie $serie) {
 
-
-
-
-
-
-
-
-    protected function listeSeries($userPseudo, $serie) {
         //$userPseudo = self::htmlesc($infoUser->get());
         $serieId = self::htmlesc($serie->getIdSerie());
         //echo $serie->getTitre();
@@ -307,7 +322,7 @@ class View
         return $res;
     }
 
-    protected function listeMangas($userPseudo, $m, $s) {
+    protected function listeMangas($userPseudo, Manga $m, Serie $s) {
         $sId = self::htmlesc($s->getIdSerie());
         $mNumTome = self::htmlesc($m->getNumTome());
 
@@ -315,6 +330,19 @@ class View
         $res .= $s->getTitre().' Tome '. $m->getNumTome();
         $res .= '</a></li>'."\n";
         return $res;
+    }
+
+    public function makeConnSucessPage(){
+        $this->router->POSTredirect($this->router->accueilPage(), 'connexion réussie');
+    }
+
+    public function makeCompteCreatedPage(){
+        $this->router->POSTredirect($this->router->connexionPage(), 'Compte crée');
+    }
+
+    public function makeMangaCreatedPage($serieId, $userPseudo){
+        $this->router->POSTredirect($this->router->seriePage($serieId, $userPseudo), 'Manga Crée, 
+                                                        vous pouvez en ajouter un autre');
     }
 
     public static function htmlesc($str) {
@@ -331,16 +359,36 @@ class View
     }
 
 
-
     public function render() {
-        echo $this->title;
-        echo $this->content;
-        if ($this->title === null || $this->content === null) {
-            //$this->makeUnexpectedErrorPage();
-        }
-        $title = $this->title;
-        $content = $this->content;
 
-        //include("templateTest.php");
+        if ($this->title === null || $this->content === null) {
+            $this->makeUnknownActionPage();
+        }
+        else {
+            ?>
+
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <title><?php echo $this->title; ?></title>
+                <link rel="stylesheet" href="<?php echo $this->style ?>"/>
+                <link rel="stylesheet" href="./skin/banner.css"/>
+            </head>
+            <body>
+            <?php
+            include "templateMenu.php"; ?>
+            <main>
+                <?php
+                echo $this->content;
+                ?>
+            </main>
+            </body>
+            </html>
+
+            <?php
+        }
     }
 }
+
+?>

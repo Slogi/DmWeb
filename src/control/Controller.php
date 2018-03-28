@@ -1,16 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jujub
- * Date: 23/03/2018
- * Time: 19:01
- */
+
 
 require_once ("model/Serie.php");
 require_once ("model/SerieBuilder.php");
-
 require_once ("model/CompteBuilder.php");
-
 require_once ("model/MangaBuilder.php");
 
 
@@ -121,12 +114,7 @@ class Controller
                 $manga->setDefaultDateParu();
             }
             $mangaId = $this->mangadb->create($manga, $idSerie);
-
-
-
-            //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
-            //$this->v->makeColorPage($colorId, $color);
-
+            $this->view->makeMangaCreatedPage($idSerie, $_SESSION['user']);
 
         }
         else {
@@ -142,7 +130,7 @@ class Controller
         if ($cb->isValid($this->comptedb)){
             $compte = $cb->createCompte();
             $pseudo = $this->comptedb->create($compte);
-
+            $this->view->makeCompteCreatedPage();
         }
         else {
             $this->view->makeInscriptionPage($cb);
@@ -166,13 +154,14 @@ class Controller
 
         if ( $compte !== null ){
 
-            $_SESSION['user'] =  $compte;
-            echo 'connexion réussie';
+            $_SESSION['pseudo'] =  $compte;
+            $_SESSION['nom'] =  $compte;
+            $_SESSION['prenom'] =  $compte;
+            $_SESSION['dateBirth'] =  $compte;
+            $this->view->makeConnSucessPage();
         }
         else {
-            $this->view->makeConnexionForm();
-
-            
+            $this->view->makeConnexionForm("Vos identifiants ne sont pas bons");
 
         }
 
@@ -248,8 +237,5 @@ class Controller
         }
 
     }
-
-
-
 
 }

@@ -56,11 +56,19 @@ form label
     color : #767676;
 
 }
-form input[type="submit"]
+form input[type="submit"],
+button
 {
     border-radius: 25px;
     width: 100%;
     padding: 3%;
     background: #444;
     color: #C1FBF9;
+}
+span {
+    color : red;
+}
+.inscription{
+    color : #767676;
+    text-align: center;
 }

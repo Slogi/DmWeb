@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title><?php echo  $sTitre ; ?></title>
+    <title><?php echo  $this->title ; ?></title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="<?php echo $this->style; ?>" />
+    <link rel="stylesheet" href="./skin/banner.css" />
 </head>
 <body>
-
+<?php include "templateMenu.php"; ?>
 <main>
     <h1><?php echo  $userPseudo ; ?></h1>
-    <h1><?php echo  'Manga : ' . $sTitre . ' Tome : ' . $mNumTome ; ?></h1>
-    <p><?php echo 'Appartient à la série : '  .$sTitre; ?></p>
+    <h1><?php echo  'Manga : ' . $this->title . ' Tome : ' . $mNumTome ; ?></h1>
     <p><?php echo 'Synopsis : ' . $sSynopsis; ?></p>
     <p><?php echo 'Auteur : ' .$sAuteur; ?></p>
 
@@ -19,11 +19,6 @@
 
     <a href="<?php echo $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) ; ?>">Modifier</a>
     <a href="<?php echo $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) ; ?>">Supprimer</a>
-
-
-
-
-
 
 </main>
 

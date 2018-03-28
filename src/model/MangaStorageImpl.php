@@ -35,8 +35,6 @@ class MangaStorageImpl implements MangaStorage
 
     public function read($idS, $numTome)
     {
-
-
         $query = "SELECT idSerie, numTome, resume, dateParu 
                   FROM manga 
                   where idSerie = $idS and numTome = $numTome
@@ -52,7 +50,6 @@ class MangaStorageImpl implements MangaStorage
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            echo $row['numTome'], $row['resume'], $row['dateParu'];
             return new Manga( $row['numTome'], $row['resume'], $row['dateParu']);
         }
         else {
@@ -80,11 +77,11 @@ class MangaStorageImpl implements MangaStorage
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
+                array_push($mangas, new Manga(
+                    $row['numTome'],
+                    $row['resume'],
+                    $row['dateParu']
+                ));
 
             }
             return $mangas;
@@ -99,23 +96,19 @@ class MangaStorageImpl implements MangaStorage
     public function update($idS, Manga $m)
     {
 
-        $numTome = $m->getNumTome();
-        $dateParu = $m->getDateParu();
-        echo $dateParu;
-/*
         $query = "UPDATE FROM manga
                   SET resume = ? , dateParu = ?
-                  WHERE idSerie = $idS and numTome = $numTome";
+                  WHERE idSerie = $idS and numTome = $m->getNumTome()";
 
         $stmt = $this->db->prepare($query);
 
         $stmt->bindValue(1, $m->getResume() );
-        $stmt->bindValue(2, $dateParu );
+        $stmt->bindValue(2, $m->getDateParu() );
 
         if ( $stmt->execute()=== true ){
 
             return "Le manga a modifié";
-        };*/
+        };
 
         return null;
     }
@@ -136,4 +129,3 @@ class MangaStorageImpl implements MangaStorage
         return null;
     }
 }
-
