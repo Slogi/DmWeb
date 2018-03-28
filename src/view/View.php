@@ -186,7 +186,7 @@ class View
 
         $s .="</label><label>Homme<input type=\"radio\" checked=\"checked\" id=\"homme\" name=\"genreCompte\" value=\"homme\">";
         $s .="</label><label>Femme<input type=\"radio\" id=\"femme\" name=\"genreCompte\" value=\"femme\">";
-        $s .="</label><label>Autre<input type=\"radio\" name=\"genreCompte\" id=\"autre\" value=\"autre\">"
+        $s .="</label><label>Autre<input type=\"radio\" name=\"genreCompte\" id=\"autre\" value=\"autre\">";
         $s .="<br/>";
         $s .="</label><label>Pseudo<input name=\"pseudoCompte\" type=\"text\" value=\"";
         $s .= self::htmlesc($builder->getData($pseudoCompteRef)) .'">';
