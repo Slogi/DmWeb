@@ -19,11 +19,6 @@
 
     <a href="<?php echo $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) ; ?>">Supprimer</a>
 
-
-
-
-
-
 </main>
 
 </body>

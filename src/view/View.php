@@ -14,7 +14,8 @@ class View
     protected $title;
     protected $content;
 
-    public function __construct(Router $router) {
+    public function __construct(Router $router, $feedback) {
+        $this->feedback = $feedback;
         $this->router = $router;
         $this->style = "";
         $this->title = null;
@@ -36,7 +37,14 @@ class View
         $mResume = self::htmlesc($m->getResume());
         $mDateParu = self::htmlesc($m->getDateParu());
 
-        include("templateManga.php");
+        $s = "<h1>". $userPseudo ."</h1>";
+        $s .="<h1> Manga :  ". $this->title ."  Tome :  ". $mNumTome ." </h1>";
+        $s .="<p> Synopsis :"  . $sSynopsis."</p>";
+        $s .="<p> Auteur : " .$sAuteur . "</p>";
+        $s .="<h3> Résumé :" .$mResume . "</h3>";
+        $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
+        $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
+        $this->content = $s;
     }
 
     public function makeSeriePage($userPseudo, Serie $s) {
@@ -47,20 +55,23 @@ class View
             foreach ($listeMangas as $m) {
                 $this->content .= $this->listeMangas($userPseudo, $m, $s);
             }
-            include("templateSerie.php");
         }
-        else  include("templateSerieSansMangas.php");
+        else  {
+                    $s = "<h1>".  $userPseudo ."</h1>";
+                    $s .="<h2>".  $this->title ."</h2>";
+                    $this->content = $s;
+        }
     }
 
     public function makeUserPage($userPseudo, $infoUser) {
-
+        $this->title = "Liste de ".$userPseudo;
         foreach ($infoUser as $serie){
             $this->content .= $this->listeSeries($userPseudo, $serie);
         }
-        include("templateUser.php");
     }
 
     public function makeAllUsersWithSeriesPage($allUsersWithSeries){
+        $this->title="Accueil";
         $s = "";
         foreach ($allUsersWithSeries as $user => $series){
 
@@ -87,7 +98,6 @@ class View
         }
         $this->content = $s;
 
-        include("templateAccueil.php");
     }
 
     public function makeUnknownActionPage() {
@@ -107,7 +117,6 @@ class View
         $s .= "<button>Créer une série</button>\n";
         $s .= "</form>\n";
         $this->content = $s;
-        include("templateCreerSerie.php");
 
     }
 
@@ -120,7 +129,6 @@ class View
         $s .= "<button>S'incrire</button>\n";
         $s .= "</form>\n";
         $this->content = $s;
-        include ("templateFormInsc.php");
     }
 
 
@@ -180,17 +188,19 @@ class View
         return $s;
 
     }
-    public function makeConnexionForm(){
+    public function makeConnexionForm($err=null){
 
         $this->title = "Connectez-vous";
         $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveConnexion().'" method="POST">'."\n";
         $s .= self::getFormConn();
+        if ($err !==null){
+            $s .="<span>".$err."</span>";
+        }
         $s .= "<button>Connexion</button>\n";
         $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=".$this->router->inscriptionPage().">inscrivez-vous</a></p>";
         $s .= "</form>\n";
         $this->content = $s;
-        include("templateFormConn.php");
 
     }
     protected function getFormConn(){
@@ -305,6 +315,19 @@ class View
         return $res;
     }
 
+    public function makeConnSucessPage(){
+        $this->router->POSTredirect($this->router->accueilPage(), 'connexion réussie');
+    }
+
+    public function makeCompteCreatedPage(){
+        $this->router->POSTredirect($this->router->connexionPage(), 'Compte crée');
+    }
+
+    public function makeMangaCreatedPage($serieId, $userPseudo){
+        $this->router->POSTredirect($this->router->seriePage($serieId, $userPseudo), 'Manga Crée, 
+                                                        vous pouvez en ajouter un autre');
+    }
+
     public static function htmlesc($str) {
         return htmlspecialchars($str,
             /* on échappe guillemets _et_ apostrophes : */
@@ -318,14 +341,37 @@ class View
             'UTF-8');
     }
 
+
     public function render() {
 
         if ($this->title === null || $this->content === null) {
-            //$this->makeUnexpectedErrorPage();
+            $this->makeUnknownActionPage();
         }
-        $title = $this->title;
-        $content = $this->content;
+        else {
+            ?>
 
-        //include("templateTest.php");
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <title><?php echo $this->title; ?></title>
+                <link rel="stylesheet" href="<?php echo $this->style ?>"/>
+                <link rel="stylesheet" href="./skin/banner.css"/>
+            </head>
+            <body>
+            <?php
+            include "templateMenu.php"; ?>
+            <main>
+                <?php
+                echo $this->content;
+                ?>
+            </main>
+            </body>
+            </html>
+
+            <?php
+        }
     }
 }
+
+?>

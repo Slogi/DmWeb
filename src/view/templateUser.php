@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="./skin/banner.css" />
 </head>
 <body>
-<? include "templateMenu.php"; ?>
+<?php include "templateMenu.php"; ?>
 <main>
     <h1><?php echo $userPseudo ; ?></h1>
     <h3><?php echo $this->content ; ?></h3>

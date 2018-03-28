@@ -6,7 +6,6 @@ require_once("view/View.php");
 require_once("control/Controller.php");
 
 session_name("dmWeb");
-session_start();
 
 class Router
 {
@@ -18,21 +17,23 @@ class Router
     }
 
     public function main() {
+        session_start();
 
+        $feedback = key_exists('feedback', $_SESSION) ? $_SESSION['feedback'] : '';
+        $_SESSION['feedback'] = '';
 
-        $view = new View($this);
+        $view = new View($this, $feedback);
         $mangadb = new MangaStorageImpl($this->db);
         $seriedb = new SerieStorageImpl($this->db, $mangadb);
         $comptedb = new CompteStorageStub($this->db);
 
-
         $ctrl = new Controller($view, $mangadb, $seriedb, $comptedb);
-
 
         $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
+
 
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
@@ -43,7 +44,6 @@ class Router
 
                * auquel cas on affiche sa page. */
             $action = ($userPseudo === null && $serieId === null && $tomeId === null) ? "accueil" : "voir";
-
 
         }
 
@@ -71,13 +71,13 @@ class Router
                     $ctrl->newSerie();
                     break;
                 case "sauverNouvelleSerie" :
-                    $serieId = $ctrl->saveNewSerie($_POST);
+                    $ctrl->saveNewSerie($_POST);
                     break;
                 case "creerManga" :
                     $ctrl->newManga(null);
                     break;
                 case "sauverNouveauManga" :
-                    $mangaId = $ctrl->saveNewManga($_POST);
+                    $ctrl->saveNewManga($_POST);
                     break;
                 case "supprimer" :
                     if ($userPseudo === null || $serieId === null || $tomeId === null) {
@@ -149,6 +149,10 @@ class Router
         return ".?action=accueil";
     }
 
+    public function creerManga(){
+        return "?.action=creerManga";
+    }
+
     public function connexionPage(){
         return ".?action=connexion";
     }
@@ -159,5 +163,11 @@ class Router
 
     public function inscriptionPage(){
         return ".?action=creerCompte";
+    }
+
+    public function POSTredirect($url, $feedback) {
+        $_SESSION['feedback'] = $feedback;
+        header("Location: ".htmlspecialchars_decode($url), true, 303);
+        die;
     }
 }

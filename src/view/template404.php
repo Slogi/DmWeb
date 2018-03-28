@@ -4,7 +4,7 @@
     <title>Page inexistante</title>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="<?php echo $this->style ?>" />
-    <link rel="stylesheet" href="../skin/banner.css" />
+    <link rel="stylesheet" href="./skin/banner.css" />
 </head>
 <body>
 <?php include "templateMenu.php"; ?>

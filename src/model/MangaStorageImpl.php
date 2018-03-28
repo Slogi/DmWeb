@@ -93,9 +93,24 @@ class MangaStorageImpl implements MangaStorage
 
     }
 
-    public function update($id, Manga $m)
+    public function update($idS, Manga $m)
     {
-        // TODO: Implement update() method.
+
+        $query = "UPDATE FROM manga
+                  SET resume = ? , dateParu = ?
+                  WHERE idSerie = $idS and numTome = $m->getNumTome()";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindValue(1, $m->getResume() );
+        $stmt->bindValue(2, $m->getDateParu() );
+
+        if ( $stmt->execute()=== true ){
+
+            return "Le manga a modifié";
+        };
+
+        return null;
     }
 
     public function delete($id, $numTome)
