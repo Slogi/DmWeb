@@ -14,6 +14,8 @@ interface MangaStorage
 
     public function readAll($idS);
 
+    public function readPseudo($idS, $numTome);
+
     public function update($idS, Manga $m);
 
     public function delete($idS, $numTome);

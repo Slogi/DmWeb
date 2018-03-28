@@ -37,7 +37,7 @@ class SerieStorageImpl implements SerieStorage
 
             $stmt1->execute();
 
-            return $idS;
+            return $this->read($idS);
         };
 
         return null;

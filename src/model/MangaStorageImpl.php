@@ -59,6 +59,32 @@ class MangaStorageImpl implements MangaStorage
         }
     }
 
+    public function readPseudo($idS, $numTome)
+    {
+        $query = "SELECT pseudo 
+                  FROM manga m
+                  join listeserie l on l.idSerie = m.idSerie
+                  where m.numTome = $numTome and l.idSerie = '$idS'";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->execute();
+
+        $num = $stmt->rowCount();
+
+        if($num>0){
+
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $row['pseudo'];
+        }
+        else {
+
+            return null;
+
+        }
+    }
+
     public function readAll($idS){
 
         $query = "SELECT numTome, resume, dateParu 
@@ -77,11 +103,11 @@ class MangaStorageImpl implements MangaStorage
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 
-                    array_push($mangas, new Manga(
-                        $row['numTome'],
-                        $row['resume'],
-                        $row['dateParu']
-                    ));
+                array_push($mangas, new Manga(
+                    $row['numTome'],
+                    $row['resume'],
+                    $row['dateParu']
+                ));
 
             }
             return $mangas;
@@ -116,7 +142,7 @@ class MangaStorageImpl implements MangaStorage
     public function delete($id, $numTome)
     {
 
-         $query = "DELETE FROM manga
+        $query = "DELETE FROM manga
                     WHERE idSerie = $id and numTome = $numTome";
 
         $stmt = $this->db->prepare($query);
@@ -129,4 +155,3 @@ class MangaStorageImpl implements MangaStorage
         return null;
     }
 }
-

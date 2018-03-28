@@ -78,11 +78,14 @@ class Controller
 
     public function saveNewSerie(array $data) {
         $sb = new SerieBuilder($data);
+        //var_dump($data) ;
+
         if ($sb->isValidSerie()){
             $serie = $sb->createSerie();
             $serieId = $this->seriedb->create($serie, "user1");
 
-            $this->newManga($serieId);
+            $this->view->makeSeriePage("user1", $serieId);
+            //$this->newManga($serieId);
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
@@ -174,20 +177,83 @@ class Controller
             session_destroy();
             $this->view->deconnexionSucess();
         }
-        else {
-
-        }
     }
 
     public function deleteManga($userPseudo, $serieId, $tomeId) {
-        /* On récupère la couleur en BD */
+
         $manga = $this->mangadb->read($serieId, $tomeId);
         if ($manga === null) {
-            /* La couleur n'existe pas en BD */
-            $this->view->makeUnknownMangaPage();
+
+            $this->view->makeMangaDeletedErr($serieId, $userPseudo);
+
+        } elseif ( $_SESSION['pseudo'] !== $this->mangadb->readPseudo($serieId, $tomeId) ){
+
+            $this->view->makeMangaDeletedErr2($serieId, $userPseudo);
+
         } else {
             /* La couleur existe, on prépare la page */
             $this->view->makeMangaDeletePage($userPseudo, $serieId, $manga);
         }
     }
+
+    public function confirmMangaDelete( $serieId, $tomeId) {
+        /* L'utilisateur confirme vouloir supprimer
+        * la couleur. On essaie. */
+        $ok = $this->mangadb->delete($serieId, $tomeId);
+        if (!$ok) {
+            /* La couleur n'existe pas en BD */
+            $this->view->makeUnknownMangaPage();
+        } else {
+            /* Tout s'est bien passé */
+            $this->view->makeMangaDeletedPage($_SESSION['pseudo'], $serieId);
+        }
+    }
+
+    public function modifyManga( $serieId, $tomeId) {
+        if ( $_SESSION['pseudo'] === $this->mangadb->readPseudo($serieId, $tomeId) ){
+            $m = $this->mangadb->read($serieId, $tomeId);
+            if ($m === null) {
+                $this->view->makeUnknownMangaPage();
+            } else {
+                /* Extraction des données modifiables */
+                $mf = MangaBuilder::buildFromColor($m);
+                /* Préparation de la page de formulaire */
+                $this->view->makeMangaModifPage($_SESSION['pseudo'], $serieId, $tomeId, $mf);
+            }
+        }
+    }
+
+    public function saveMangaModifications($userPseudo,$serieId,$tomeId, array $data) {
+        /* On récupère en BD la couleur à modifier */
+        $manga = $this->mangadb->read($serieId, $tomeId);
+
+        if ($manga === null) {
+            // La couleur n'existe pas en BD
+            $this->view->makeUnknownMangaPage();
+        } else {
+
+            $mf = new MangaBuilder($data);
+            // Validation des données
+            if ($mf->isValidManga()) {
+                // Modification de la couleur
+                $mf->updateManga($manga);
+                // On essaie de mettre à jour en BD.
+                //Normalement ça devrait marcher (on vient de
+                //récupérer la couleur).
+
+                echo 'date : '.$manga->getDateParu();
+                //$ok = $this->mangadb->update($serieId, $manga);
+                //if (!$ok)
+                //throw new Exception("Identifier has disappeared?!");
+                // Préparation de la page de la couleur
+                //$infoSerie = $this->seriedb->read($serieId);
+                //$this->view->makeMangaPage($userPseudo, $infoSerie, $manga);
+            }
+            else {
+                $this->view->makeMangaModifPage($userPseudo, $serieId, $tomeId, $mf);
+            }
+        }
+
+    }
+
 }

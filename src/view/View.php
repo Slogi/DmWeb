@@ -37,14 +37,14 @@ class View
         $mResume = self::htmlesc($m->getResume());
         $mDateParu = self::htmlesc($m->getDateParu());
 
-        $s = "<h1>". $userPseudo ."</h1>";
+        $s .= "<h1>". $userPseudo ."</h1>";
         $s .="<h1> Manga :  ". $this->title ."  Tome :  ". $mNumTome ." </h1>";
         $s .="<p> Synopsis :"  . $sSynopsis."</p>";
         $s .="<p> Auteur : " .$sAuteur . "</p>";
         $s .="<h3> Résumé :" .$mResume . "</h3>";
         $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
         $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
-        $s .="<a href=\"". $this->router . "\">Modifier</a>";
+        $s .="<a href=\"". $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) . "\">Modifier</a>";
         $this->content = $s;
     }
 
@@ -53,8 +53,10 @@ class View
         $listeMangas = $s->getMangas();
 
         if($listeMangas !== null ){
+            $this->content .= "<div class=\"card\"><h2>$userPseudo</h2>";
             foreach ($listeMangas as $m) {
                 $this->content .= $this->listeMangas($userPseudo, $m, $s);
+                $this->content .= "</div>";
             }
         }
         else  {
@@ -66,9 +68,13 @@ class View
 
     public function makeUserPage($userPseudo, $infoUser) {
         $this->title = "Liste de ".$userPseudo;
+        $this->content .= "<div class=\"card\"><h2>$userPseudo</h2>";
+
         foreach ($infoUser as $serie){
+
             $this->content .= $this->listeSeries($userPseudo, $serie);
         }
+        $this->content .= "</div>";
     }
 
     public function makeAllUsersWithSeriesPage($allUsersWithSeries){
@@ -231,8 +237,8 @@ class View
         $s .="</label></p>\n";
 
         $resumeRef = $builder->getResumeRef();
-        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeRef.'" rows="4" cols="50"></textarea></br></br>';
-        $s .= self::htmlesc($builder->getData($resumeRef));
+        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeRef.'" rows="4" cols="50">'.self::htmlesc($builder->getData($resumeRef)).'</textarea></br></br>';
+        //$s .= self::htmlesc($builder->getData($resumeRef));
         //echo self::htmlesc($builder->getData($titreSerieRef));
 
         $err = $builder->getErrors($resumeRef);
@@ -293,24 +299,43 @@ class View
         $this->content .= "<button>Confirmer</button>\n</form>\n";
     }
 
+
+    public function makeMangaDeletedPage($userPseudo, $serieId) {
+        $this->title = "Suppression effectuée";
+        $this->content = "<p>Le tome a été correctement supprimé.</p>";
+        $this->content .= '<a href="'.$this->router->seriePage($userPseudo, $serieId).'" >Revenir</a>';
+    }
+
+    public function makeMangaModifPage($userPseudo, $serieId, $mf, MangaBuilder $builder) {
+        $this->title = "Modifier le tome";
+
+        $this->content = '<form action="'.$this->router->updateModifiedManga($userPseudo, $serieId, $serieId).'" method="POST">'."\n";
+        $this->content .= self::getFormFieldsManga($builder, $serieId);
+        $this->content .= '<button>Modifier</button>'."\n";
+        $this->content .= '</form>'."\n";
+    }
+
     protected function listeSeries($userPseudo, Serie $serie) {
+
         //$userPseudo = self::htmlesc($infoUser->get());
         $serieId = self::htmlesc($serie->getIdSerie());
         //echo $serie->getTitre();
-
+        $res ="<div class=\"container\">";
         $res = '<li><a href="'.$this->router->seriePage($userPseudo, $serieId).'" >';
         $res .= $serie->getTitre();
         $res .= '</a></li>'."\n";
+        $res .= '</div>';
         return $res;
     }
 
     protected function listeMangas($userPseudo, Manga $m, Serie $s) {
         $sId = self::htmlesc($s->getIdSerie());
         $mNumTome = self::htmlesc($m->getNumTome());
-
-        $res = '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
+        $res ="<div class=\"container\">";
+        $res .= '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
         $res .= $s->getTitre().' Tome '. $m->getNumTome();
         $res .= '</a></li>'."\n";
+        $res .= '</div>';
         return $res;
     }
 
@@ -327,8 +352,15 @@ class View
     }
 
     public function makeMangaCreatedPage($serieId, $userPseudo){
-        $this->router->POSTredirect($this->router->seriePage($serieId, $userPseudo), 'Manga Crée, 
-                                                        vous pouvez en ajouter un autre');
+        $this->router->POSTredirect($this->router->seriePage($userPseudo, $serieId), 'Manga Crée');
+    }
+
+    public function makeMangaDeletedErr($serieId, $userPseudo){
+        $this->router->POSTredirect($this->router->seriePage($userPseudo, $serieId), 'Ce Manga n\'existe pas');
+    }
+
+    public function makeMangaDeletedErr2($serieId, $userPseudo){
+        $this->router->POSTredirect($this->router->seriePage($userPseudo, $serieId), 'Ce Manga ne vous appartient pas');
     }
 
     public static function htmlesc($str) {
@@ -353,24 +385,24 @@ class View
         else {
             ?>
 
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title><?php echo $this->title; ?></title>
-                <link rel="stylesheet" href="<?php echo $this->style ?>"/>
-                <link rel="stylesheet" href="./skin/banner.css"/>
-            </head>
-            <body>
-            <?php
-            include "templateMenu.php"; ?>
-            <main>
-                <?php
-                echo $this->content;
-                ?>
-            </main>
-            </body>
-            </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title><?php echo $this->title; ?></title>
+    <link rel="stylesheet" href="<?php echo $this->style; ?>"/>
+    <link rel="stylesheet" href="./skin/banner.css"/>
+</head>
+<body>
+<?php include "templateMenu.php"; ?>
+<?php if ($this->feedback !== '') { ?>
+    <div class="feedback"><?php echo $this->feedback; ?></div>
+<?php } ?>
+    <main>
+        <?php echo $this->content; ?>
+    </main>
+</body>
+</html>
 
             <?php
         }

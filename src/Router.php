@@ -94,6 +94,36 @@ class Router
                         }
                     }
                     break;
+                case "confirmerSuppression":
+                    if ( key_exists('pseudo', $_SESSION)) {
+
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->confirmMangaDelete( $serieId, $tomeId);
+                        }
+                    }
+                    break;
+                case "modifier":
+                    if ( key_exists('pseudo', $_SESSION)){
+
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->modifyManga($userPseudo, $serieId, $tomeId);
+                        }
+                    }
+                    break;
+                case "sauverModifs":
+                    if ( key_exists('pseudo', $_SESSION)){
+
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->saveMangaModifications($userPseudo,$serieId,$tomeId, $_POST);
+                        }
+                    }
+                    break;
                 case "sauverNouveauCompte" :
                     if ( !key_exists('pseudo', $_SESSION))
                         $ctrl->saveNewCompte($_POST);
@@ -120,7 +150,6 @@ class Router
             //$view->makeUnknownActionPage($e);
         }
         $view->render();
-
     }
 
     public function mangaPage($userPseudo, $serieId, $tomeId) {
@@ -153,6 +182,14 @@ class Router
 
     public function confirmMangaDelete($userPseudo,$serieId, $tomeId) {
         return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=confirmerSuppression";
+    }
+
+    public function mangaModifPage($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=modifier";
+    }
+
+    public function updateModifiedManga($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=sauverModifs";
     }
 
     public function saveConnexion() {

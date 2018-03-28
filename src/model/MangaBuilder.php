@@ -23,6 +23,14 @@ class MangaBuilder{
         $this->errors = array();
     }
 
+    public static function buildFromColor(Manga $manga) {
+        return new MangaBuilder(array(
+            "numTome" => $manga->getNumTome(),
+            "resume" => $manga->getResume(),
+            "dateParu" => $manga->getDateParu()
+        ));
+    }
+
     public function isValidManga() {
         $this->errors = array();
 
@@ -52,6 +60,13 @@ class MangaBuilder{
             //throw new Exception("Missing fields for serie creation");
         }
         return new Manga($this->data["numTome"], $this->data["resume"], $this->data["dateParu"]);
+    }
+
+    public function updateManga(Manga $m) {
+        if (key_exists("resume", $this->data))
+            $m->setResume($this->data["resume"]);
+        if (key_exists("dateParu", $this->data))
+            $m->setDateParu($this->data["dateParu"]);
     }
 
     public function getNumTomeRef() {
