@@ -82,8 +82,30 @@ class Router
                         } else {
                             $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
                         }
-
                         break;
+                    case "confirmerSuppression":
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->confirmMangaDelete($userPseudo, $serieId, $tomeId);
+                        }
+                        break;
+                    case "modifier":
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->modifyManga($userPseudo, $serieId, $tomeId);
+                        }
+                        break;
+                    case "sauverModifs":
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->saveMangaModifications($userPseudo,$serieId,$tomeId, $_POST);
+                        }
+                        break;
+
+
                 }
             }catch (Exception $e) {
                 echo $e;
@@ -134,6 +156,14 @@ class Router
 
     public function confirmMangaDelete($userPseudo,$serieId, $tomeId) {
         return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=confirmerSuppression";
+    }
+
+    public function mangaModifPage($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=modifier";
+    }
+
+    public function updateModifiedManga($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=sauverModifs";
     }
 
 

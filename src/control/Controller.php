@@ -141,5 +141,66 @@ class Controller
         }
     }
 
+    public function confirmMangaDelete($userPseudo, $serieId, $tomeId) {
+        /* L'utilisateur confirme vouloir supprimer
+        * la couleur. On essaie. */
+        $ok = $this->mangadb->delete($serieId, $tomeId);
+        if (!$ok) {
+            /* La couleur n'existe pas en BD */
+            $this->view->makeUnknownMangaPage();
+        } else {
+            /* Tout s'est bien passé */
+            $this->view->makeMangaDeletedPage($userPseudo, $serieId);
+        }
+    }
+
+    public function modifyManga($userPseudo, $serieId, $tomeId) {
+        /* On récupère en BD la couleur à modifier */
+        $m = $this->mangadb->read($serieId, $tomeId);
+        if ($m === null) {
+            $this->view->makeUnknownMangaPage();
+        } else {
+            /* Extraction des données modifiables */
+            $mf = MangaBuilder::buildFromColor($m);
+            /* Préparation de la page de formulaire */
+            $this->view->makeMangaModifPage($userPseudo, $serieId, $tomeId, $mf);
+        }
+    }
+
+    public function saveMangaModifications($userPseudo,$serieId,$tomeId, array $data) {
+        /* On récupère en BD la couleur à modifier */
+        $manga = $this->mangadb->read($serieId, $tomeId);
+
+        if ($manga === null) {
+            // La couleur n'existe pas en BD
+            $this->view->makeUnknownMangaPage();
+        } else {
+
+            $mf = new MangaBuilder($data);
+            // Validation des données
+            if ($mf->isValidManga()) {
+                // Modification de la couleur
+                $mf->updateManga($manga);
+                // On essaie de mettre à jour en BD.
+                //Normalement ça devrait marcher (on vient de
+                //récupérer la couleur).
+
+                echo 'date : '.$manga->getDateParu();
+                //$ok = $this->mangadb->update($serieId, $manga);
+                //if (!$ok)
+                    //throw new Exception("Identifier has disappeared?!");
+                // Préparation de la page de la couleur
+                //$infoSerie = $this->seriedb->read($serieId);
+                //$this->view->makeMangaPage($userPseudo, $infoSerie, $manga);
+            }
+            else {
+                $this->view->makeMangaModifPage($userPseudo, $serieId, $tomeId, $mf);
+            }
+        }
+
+    }
+
+
+
 
 }

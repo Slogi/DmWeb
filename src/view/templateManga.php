@@ -17,6 +17,7 @@
     <h3><?php echo 'Résumé : '.$mResume; ?></h3>
     <h3><?php echo 'Date de parution : '.$mDateParu; ?></h3>
 
+    <a href="<?php echo $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) ; ?>">Modifier</a>
     <a href="<?php echo $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) ; ?>">Supprimer</a>
 
 

@@ -35,6 +35,8 @@ class MangaStorageImpl implements MangaStorage
 
     public function read($idS, $numTome)
     {
+
+
         $query = "SELECT idSerie, numTome, resume, dateParu 
                   FROM manga 
                   where idSerie = $idS and numTome = $numTome
@@ -50,6 +52,7 @@ class MangaStorageImpl implements MangaStorage
 
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            echo $row['numTome'], $row['resume'], $row['dateParu'];
             return new Manga( $row['numTome'], $row['resume'], $row['dateParu']);
         }
         else {
@@ -93,14 +96,44 @@ class MangaStorageImpl implements MangaStorage
 
     }
 
-    public function update($id, Manga $m)
+    public function update($idS, Manga $m)
     {
-        // TODO: Implement update() method.
+
+        $numTome = $m->getNumTome();
+        $dateParu = $m->getDateParu();
+        echo $dateParu;
+/*
+        $query = "UPDATE FROM manga
+                  SET resume = ? , dateParu = ?
+                  WHERE idSerie = $idS and numTome = $numTome";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindValue(1, $m->getResume() );
+        $stmt->bindValue(2, $dateParu );
+
+        if ( $stmt->execute()=== true ){
+
+            return "Le manga a modifié";
+        };*/
+
+        return null;
     }
 
     public function delete($id, $numTome)
     {
-        // TODO: Implement delete() method.
+
+        $query = "DELETE FROM manga
+                    WHERE idSerie = $id and numTome = $numTome";
+
+        $stmt = $this->db->prepare($query);
+
+        if ( $stmt->execute()=== true ){
+
+            return "Le manga a été supprimé";
+        };
+
+        return null;
     }
 }
 

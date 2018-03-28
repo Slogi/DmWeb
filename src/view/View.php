@@ -131,8 +131,8 @@ class View
         $s .="</label></p>\n";
 
         $resumeRef = $builder->getResumeRef();
-        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeRef.'" rows="4" cols="50"></textarea></br></br>';
-        $s .= self::htmlesc($builder->getData($resumeRef));
+        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeRef.'" rows="4" cols="50">'.self::htmlesc($builder->getData($resumeRef)).'</textarea></br></br>';
+        //$s .= self::htmlesc($builder->getData($resumeRef));
         //echo self::htmlesc($builder->getData($titreSerieRef));
 
         $err = $builder->getErrors($resumeRef);
@@ -194,6 +194,20 @@ class View
         $this->content .= "<button>Confirmer</button>\n</form>\n";
     }
 
+    public function makeMangaDeletedPage($userPseudo, $serieId) {
+        $this->title = "Suppression effectuée";
+        $this->content = "<p>Le tome a été correctement supprimé.</p>";
+        $this->content .= '<a href="'.$this->router->seriePage($userPseudo, $serieId).'" >Revenir</a>';
+    }
+
+    public function makeMangaModifPage($userPseudo, $serieId, $mf, MangaBuilder $builder) {
+        $this->title = "Modifier le tome";
+
+        $this->content = '<form action="'.$this->router->updateModifiedManga($userPseudo, $serieId, $serieId).'" method="POST">'."\n";
+        $this->content .= self::getFormFieldsManga($builder, $serieId);
+        $this->content .= '<button>Modifier</button>'."\n";
+        $this->content .= '</form>'."\n";
+    }
 
 
 
