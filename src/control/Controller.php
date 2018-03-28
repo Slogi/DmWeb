@@ -29,8 +29,6 @@ class Controller
         if ($userPseudo === null || $infoManga === null || $infoSerie === null) {
             $this->view->makeUnknownActionPage();
 
-            /* La couleur n'existe pas en BD */
-            //$this->v->makeUnknownColorPage();
         } else {
 
             /* La couleur existe, on prépare la page */
@@ -51,7 +49,6 @@ class Controller
     public function userPage($userPseudo) {
         //echo $userPseudo;
         $infoUser = $this->seriedb->readAllUser($userPseudo);
-        //var_dump($infoUser);
 
         if ($userPseudo === null || $infoUser === null) {
             $this->view->makeUnknownActionPage();
@@ -120,10 +117,8 @@ class Controller
                 }
                 $mangaId = $this->mangadb->create($manga, $idSerie);
                 $this->view->makeMangaCreatedPage($idSerie, $_SESSION['user']);
-
             }
             else {
-
                 $this->view->makeMangaCreationPage($mb, $idSerie);
             }
 
