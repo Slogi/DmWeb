@@ -16,7 +16,21 @@ class MangaStorageImpl implements MangaStorage
 
     public function create(Manga $m, $idSerie)
     {
-        // TODO: Implement create() method.
+        $query = "INSERT INTO manga (idSerie, numTome, resume, dateParu)
+                                  VALUES ('".$idSerie."', ?, ?, ?)";
+
+        $stmt = $this->db->prepare($query);
+
+        $stmt->bindValue(1, $m->getNumTome() );
+        $stmt->bindValue(2, $m->getResume() );
+        $stmt->bindValue(3, $m->getDateParu() );
+
+        if ( $stmt->execute()=== true ){
+
+            return $m->getNumTome();
+        };
+
+        return null;
     }
 
     public function read($idS, $numTome)

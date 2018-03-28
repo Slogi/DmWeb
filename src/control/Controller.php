@@ -8,6 +8,7 @@
 
 require_once ("model/Serie.php");
 require_once ("model/SerieBuilder.php");
+require_once ("model/MangaBuilder.php");
 
 class Controller
 {
@@ -71,16 +72,17 @@ class Controller
     }
 
     public function newSerie() {
-        echo "newSerie";
         $sb = new SerieBuilder();
         $this->view->makeSerieCreationPage($sb);
     }
 
     public function saveNewSerie(array $data) {
         $sb = new SerieBuilder($data);
-        if ($sb->isValid()){
+        if ($sb->isValidSerie()){
             $serie = $sb->createSerie();
             $serieId = $this->seriedb->create($serie, "user1");
+
+            $this->newManga($serieId);
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
@@ -88,7 +90,57 @@ class Controller
 
         }
         else {
-            $this->v->makeSerieCreationPage($sb);
+
+            $this->view->makeSerieCreationPage($sb);
         }
     }
+
+    public function newManga($idSerie) {
+        if($idSerie === null){
+            $this->view->makeUnknownActionPage();
+        }
+        else {
+            $sb = new MangaBuilder();
+            $this->view->makeMangaCreationPage($sb, $idSerie);
+        }
+
+    }
+
+    public function saveNewManga(array $data) {
+        $idSerie = $data['idSerie'];
+        //echo 'DATE' . ($data['dateParu'] === null);
+        if($data['dateParu'] === null){
+            //echo 'date null';
+            $data['dateParu'] = date('Y-m-d H:i:s');
+        }
+        //echo $idSerie;
+        $mb = new MangaBuilder($data);
+        if ($mb->isValidManga()){
+            var_dump($mb);
+
+            $manga = $mb->createManga();
+            if($manga->getDateParu() === ''){
+                $manga->setDefaultDateParu();
+            }
+            //echo 'date : ' . $manga->getDateParu();
+
+
+
+            var_dump($manga);
+            $mangaId = $this->mangadb->create($manga, $idSerie);
+
+            echo 'DONE';
+
+            //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
+            //$this->v->makeColorPage($colorId, $color);
+
+
+        }
+        else {
+            $this->view->makeMangaCreationPage($mb, $idSerie);
+        }
+
+    }
+
+
 }

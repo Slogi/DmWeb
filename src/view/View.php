@@ -93,19 +93,61 @@ class View
     }
 
     public function makeSerieCreationPage(SerieBuilder $builder) {
-        echo "makeSerieCreationPage";
         $this->title = "Ajouter votre série";
         //$s = '<form action="" method="POST">'."\n";
         $s = '<form action="'.$this->router->saveCreatedSerie().'" method="POST">'."\n";
-        $s .= self::getFormFields($builder);
-        $s .= "<button>Créer</button>\n";
+        $s .= self::getFormFieldsSerie($builder);
+        $s .= "<button>Créer une série</button>\n";
         $s .= "</form>\n";
         $this->content = $s;
 
     }
 
-    protected function getFormFields(SerieBuilder $builder) {
-        echo "formulaire";
+    public function makeMangaCreationPage(MangaBuilder $builder, $idSerie) {
+        $this->title = "Ajouter votre Manga";
+        $s = '<form action="'.$this->router->saveCreatedManga().'" method="POST">'."\n";
+        $s .= self::getFormFieldsManga($builder, $idSerie);
+        $s .= "<button>Créer un manga</button>\n";
+        $s .= "</form>\n";
+        $this->content = $s;
+
+    }
+
+    protected function getFormFieldsManga(MangaBuilder $builder, $idSerie) {
+        $numTomeRef = $builder->getNumTomeRef();
+        $s = "";
+        $s .= '<p><label>Numéro du tome : <input type="text" name="'.$numTomeRef.'" value="';
+        $s .= self::htmlesc($builder->getData($numTomeRef));
+        $s .= "\" />";
+        $err = $builder->getErrors($numTomeRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label></p>\n";
+
+        $resumeRef = $builder->getResumeRef();
+        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeRef.'" rows="4" cols="50"></textarea></br></br>';
+        $s .= self::htmlesc($builder->getData($resumeRef));
+        //echo self::htmlesc($builder->getData($titreSerieRef));
+
+        $err = $builder->getErrors($resumeRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label></p>\n";
+
+        $dateParuRef = $builder->getDateParuRef();
+        $s .= '<p><label>Date de parution : <input type="date" name="'.$dateParuRef.'" ';
+        $err = $builder->getErrors($dateParuRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label></p>\n";
+
+        $s .= "<input type=\"hidden\" name=\"idSerie\" value=\"$idSerie\" />";
+        return $s;
+
+
+    }
+
+    protected function getFormFieldsSerie(SerieBuilder $builder) {
         $titreSerieRef = $builder->getTitreRef();
         $s = "";
         $s .= '<p><label>Titre de la Serie : <input type="text" name="'.$titreSerieRef.'" value="';
@@ -128,18 +170,13 @@ class View
         $s .= '</label></p>'."\n";
 
         $resumeSerieRef = $builder->getResumeRef();
-        $s .= '<p><label>Résumé de la série : <input type="text" name="'.$resumeSerieRef.'" value="';
-        $s .= self::htmlesc($builder->getData($resumeSerieRef));
-        //echo self::htmlesc($builder->getData($resumeSerieRef));
-        $s .= "\" />";
+        $s .= '<label>Résumé : </label></br><textarea name="'.$resumeSerieRef.'" rows="4" cols="50"></textarea></br></br>';
         $err = $builder->getErrors($resumeSerieRef);
         if ($err !== null)
             $s .= ' <span>'.$err.'</span>';
-        $s .= '</label></p>'."\n";
+        $s .= ''."\n";
+
         return $s;
-
-
-
     }
 
 

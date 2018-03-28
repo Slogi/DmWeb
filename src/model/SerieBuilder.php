@@ -24,7 +24,7 @@ class SerieBuilder{
     }
 
 
-    public function isValid() {
+    public function isValidSerie() {
         $this->errors = array();
 
         if (!key_exists("titreSerie", $this->data) || $this->data["titreSerie"] === ""){
@@ -45,6 +45,8 @@ class SerieBuilder{
         return count($this->errors) === 0;
 
     }
+
+
 
     public function createSerie() {
         if (!key_exists("titreSerie", $this->data) || !key_exists("auteurSerie", $this->data)){

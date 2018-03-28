@@ -25,16 +25,10 @@ class Router
 
         $ctrl = new Controller($view, $mangadb, $seriedb);
 
-       // echo $_GET['pseudo'];
-       // echo $_GET['serie'];
-       // echo $_GET['tome'];
 
         $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
-
-        //$mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
-
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
 
         if ($action === null) {
@@ -46,7 +40,7 @@ class Router
 
                * auquel cas on affiche sa page. */
             $action = ($userPseudo === null && $serieId === null && $tomeId === null) ? "accueil" : "voir";
-            //echo $action;
+
 
         }
 
@@ -55,16 +49,12 @@ class Router
                 switch ($action) {
                     case "voir":
                         if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
-                            //echo $serieId;
-                            //echo $tomeId;
                             $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
                         }
                         elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
                             $ctrl->seriePage($userPseudo, $serieId);
                         }
                         elseif($userPseudo !== null && $serieId === null && $tomeId === null){
-                            //echo 'aaa';
-                            //echo $userPseudo;
                             $ctrl->userPage($userPseudo);
                         }
                         else {
@@ -75,13 +65,17 @@ class Router
                         $ctrl->allUsersWithSeriesPage();
                         break;
                     case "creerSerie" :
-                        echo $action;
                         $ctrl->newSerie();
                         break;
                     case "sauverNouvelleSerie" :
                         $serieId = $ctrl->saveNewSerie($_POST);
                         break;
-
+                    case "creerManga" :
+                        $ctrl->newManga(null);
+                        break;
+                    case "sauverNouveauManga" :
+                        $mangaId = $ctrl->saveNewManga($_POST);
+                        break;
                 }
             }catch (Exception $e) {
                 echo $e;
@@ -120,6 +114,10 @@ class Router
 
     public function saveCreatedSerie() {
         return ".?action=sauverNouvelleSerie";
+    }
+
+    public function saveCreatedManga() {
+        return ".?action=sauverNouveauManga";
     }
 
 
