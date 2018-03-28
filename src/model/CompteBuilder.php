@@ -23,7 +23,6 @@ class CompteBuilder
         $this->errors = array();
     }
 
-
     public function isValid($comptedb) {
 
 
@@ -77,8 +76,6 @@ class CompteBuilder
         return new Compte( $this->data["pseudoCompte"], password_hash($this->data["mdpCompte"], PASSWORD_BCRYPT),
             $this->data["nomCompte"], $this->data['prenomCompte'], $this->data['dateBirthCompte'], $this->data['genreCompte']);
     }
-
-
 
     public function getPseudoRef() {
         return "pseudoCompte";

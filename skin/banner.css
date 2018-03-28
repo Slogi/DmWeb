@@ -2,7 +2,12 @@ body {
     margin:auto;
     padding: 0;
     background-color: #FEF7D4;
+    font-family: 'Oswald', sans-serif;
+    text-decoration: none;
+    list-style: none;
+
 }
+
 
 .nav ul {
     border-radius: 25px;
@@ -12,6 +17,8 @@ body {
     width: 80%;
     padding: 0 auto;
     margin: 0 auto;
+    text-decoration: none;
+
 }
 .nav li {
     font-family: 'Oswald', sans-serif;
@@ -20,12 +27,15 @@ body {
     text-align: center;
     height: 40px;
     border-bottom: 1px solid #888;
+    text-decoration: none;
+
 }
 
 .nav a {
-    text-decoration: none;
     color: #C1FBF9;
     display: block;
+    text-decoration: none;
+
 }
 
 img {
@@ -42,14 +52,23 @@ img {
         height: 50px;
         line-height: 50px;
         font-size: 1.4em;
+
     }
 
     .nav li {
         display: inline-block;
         text-align: center;
+
     }
     .nav {
         margin: 0;
         border-radius: 25px;
     }
 }
+
+main {
+    margin :20px;
+    padding:20px;
+    text-decoration: none;
+}
+

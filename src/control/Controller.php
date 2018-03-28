@@ -2,6 +2,7 @@
 
 
 require_once ("model/Serie.php");
+require_once ("model/Compte.php");
 require_once ("model/SerieBuilder.php");
 require_once ("model/CompteBuilder.php");
 require_once ("model/MangaBuilder.php");
@@ -160,32 +161,45 @@ class Controller
 
         if ( $compte !== null ){
 
-            $_SESSION['pseudo'] =  $compte;
-            $_SESSION['nom'] =  $compte;
-            $_SESSION['prenom'] =  $compte;
-            $_SESSION['dateBirth'] =  $compte;
+            $_SESSION['pseudo'] =  $compte->getPseudo();
+            $_SESSION['nom'] =  $compte->getNom();
+            $_SESSION['prenom'] =  $compte->getPrenom();
+            $_SESSION['dateBirth'] =  $compte->getDateBirth();
+            $_SESSION['genre'] = $compte->getGenre();
             $this->view->makeConnSucessPage();
         }
         else {
             $this->view->makeConnexionForm("Vos identifiants ne sont pas bons");
 
         }
+    }
 
+    public function deconnexion (){
+
+        if (key_exists('pseudo', $_SESSION ) ){
+            session_destroy();
+            $this->view->deconnexionSucess();
+        }
     }
 
     public function deleteManga($userPseudo, $serieId, $tomeId) {
-        /* On récupère la couleur en BD */
+
         $manga = $this->mangadb->read($serieId, $tomeId);
         if ($manga === null) {
-            /* La couleur n'existe pas en BD */
-            $this->view->makeUnknownMangaPage();
+
+            $this->view->makeMangaDeletedErr($serieId, $userPseudo);
+
+        } elseif ( $_SESSION['pseudo'] !== $this->mangadb->readPseudo($serieId, $tomeId) ){
+
+            $this->view->makeMangaDeletedErr2($serieId, $userPseudo);
+
         } else {
             /* La couleur existe, on prépare la page */
             $this->view->makeMangaDeletePage($userPseudo, $serieId, $manga);
         }
     }
 
-    public function confirmMangaDelete($userPseudo, $serieId, $tomeId) {
+    public function confirmMangaDelete( $serieId, $tomeId) {
         /* L'utilisateur confirme vouloir supprimer
         * la couleur. On essaie. */
         $ok = $this->mangadb->delete($serieId, $tomeId);
@@ -194,20 +208,21 @@ class Controller
             $this->view->makeUnknownMangaPage();
         } else {
             /* Tout s'est bien passé */
-            $this->view->makeMangaDeletedPage($userPseudo, $serieId);
+            $this->view->makeMangaDeletedPage($_SESSION['pseudo'], $serieId);
         }
     }
 
-    public function modifyManga($userPseudo, $serieId, $tomeId) {
-        /* On récupère en BD la couleur à modifier */
-        $m = $this->mangadb->read($serieId, $tomeId);
-        if ($m === null) {
-            $this->view->makeUnknownMangaPage();
-        } else {
-            /* Extraction des données modifiables */
-            $mf = MangaBuilder::buildFromColor($m);
-            /* Préparation de la page de formulaire */
-            $this->view->makeMangaModifPage($userPseudo, $serieId, $tomeId, $mf);
+    public function modifyManga( $serieId, $tomeId) {
+        if ( $_SESSION['pseudo'] === $this->mangadb->readPseudo($serieId, $tomeId) ){
+            $m = $this->mangadb->read($serieId, $tomeId);
+            if ($m === null) {
+                $this->view->makeUnknownMangaPage();
+            } else {
+                /* Extraction des données modifiables */
+                $mf = MangaBuilder::buildFromColor($m);
+                /* Préparation de la page de formulaire */
+                $this->view->makeMangaModifPage($_SESSION['pseudo'], $serieId, $tomeId, $mf);
+            }
         }
     }
 
@@ -232,7 +247,7 @@ class Controller
                 echo 'date : '.$manga->getDateParu();
                 //$ok = $this->mangadb->update($serieId, $manga);
                 //if (!$ok)
-                    //throw new Exception("Identifier has disappeared?!");
+                //throw new Exception("Identifier has disappeared?!");
                 // Préparation de la page de la couleur
                 //$infoSerie = $this->seriedb->read($serieId);
                 //$this->view->makeMangaPage($userPseudo, $infoSerie, $manga);

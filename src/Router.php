@@ -17,6 +17,7 @@ class Router
     }
 
     public function main() {
+
         session_start();
 
         $feedback = key_exists('feedback', $_SESSION) ? $_SESSION['feedback'] : '';
@@ -67,58 +68,81 @@ class Router
                     $ctrl->allUsersWithSeriesPage();
                     break;
                 case "creerSerie" :
-                    $ctrl->newSerie();
+                    if ( key_exists('pseudo', $_SESSION))
+                        $ctrl->newSerie();
                     break;
+
                 case "sauverNouvelleSerie" :
-                    $ctrl->saveNewSerie($_POST);
+                    if ( key_exists('pseudo', $_SESSION))
+                        $ctrl->saveNewSerie($_POST);
                     break;
                 case "creerManga" :
-                    $ctrl->newManga($userPseudo,$serieId);
+                    if ( key_exists('pseudo', $_SESSION))
+                        $ctrl->newManga($userPseudo,$serieId);
                     break;
                 case "sauverNouveauManga" :
-                    $ctrl->saveNewManga($_POST);
+                    if ( key_exists('pseudo', $_SESSION))
+                        $ctrl->saveNewManga($_POST);
                     break;
                 case "supprimer" :
-                    if ($userPseudo === null || $serieId === null || $tomeId === null) {
-                        $view->makeUnknownActionPage();
-                    } else {
-                        $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
+                    if ( key_exists('pseudo', $_SESSION)){
+
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
+                        }
                     }
                     break;
-                     case "confirmerSuppression":
+                case "confirmerSuppression":
+                    if ( key_exists('pseudo', $_SESSION)) {
+
                         if ($userPseudo === null || $serieId === null || $tomeId === null) {
                             $view->makeUnknownActionPage();
                         } else {
-                            $ctrl->confirmMangaDelete($userPseudo, $serieId, $tomeId);
+                            $ctrl->confirmMangaDelete( $serieId, $tomeId);
                         }
-                        break;
-                    case "modifier":
+                    }
+                    break;
+                case "modifier":
+                    if ( key_exists('pseudo', $_SESSION)){
+
                         if ($userPseudo === null || $serieId === null || $tomeId === null) {
                             $view->makeUnknownActionPage();
                         } else {
-                            $ctrl->modifyManga($userPseudo, $serieId, $tomeId);
+                            $ctrl->modifyManga( $serieId, $tomeId);
                         }
-                        break;
-                    case "sauverModifs":
+                    }
+                    break;
+                case "sauverModifs":
+                    if ( key_exists('pseudo', $_SESSION)){
+
                         if ($userPseudo === null || $serieId === null || $tomeId === null) {
                             $view->makeUnknownActionPage();
                         } else {
                             $ctrl->saveMangaModifications($userPseudo,$serieId,$tomeId, $_POST);
                         }
-                        break;
+                    }
+                    break;
                 case "sauverNouveauCompte" :
-
-                    $ctrl->saveNewCompte($_POST);
+                    if ( !key_exists('pseudo', $_SESSION))
+                        $ctrl->saveNewCompte($_POST);
                     break;
                 case "connexion" :
-                    $ctrl->connexion();
+                    if ( !key_exists('pseudo', $_SESSION))
+                        $ctrl->connexion();
+                    break;
+                case "deconnecter" :
+                    if ( key_exists('pseudo', $_SESSION))
+                        $ctrl->deconnexion();
                     break;
                 case "sauverConnexion" :
-
-                    $ctrl->saveConn($_POST);
+                    if ( !key_exists('pseudo', $_SESSION))
+                        $ctrl->saveConn($_POST);
                     break;
                 case "creerCompte" :
-                    $ctrl->newCompte();
+                    if ( !key_exists('pseudo', $_SESSION))
+                        $ctrl->newCompte();
                     break;
             }
         }catch (Exception $e) {
@@ -190,6 +214,10 @@ class Router
 
     public function inscriptionPage(){
         return ".?action=creerCompte";
+    }
+
+    public function deconnecter(){
+        return ".?action=deconnecter";
     }
 
     public function POSTredirect($url, $feedback) {
