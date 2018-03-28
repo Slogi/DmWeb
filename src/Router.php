@@ -73,7 +73,7 @@ class Router
                     $ctrl->saveNewSerie($_POST);
                     break;
                 case "creerManga" :
-                    $ctrl->newManga(null);
+                    $ctrl->newManga($userPseudo,$serieId);
                     break;
                 case "sauverNouveauManga" :
                     $ctrl->saveNewManga($_POST);
@@ -176,8 +176,8 @@ class Router
         return ".?action=accueil";
     }
 
-    public function creerManga(){
-        return "?.action=creerManga";
+    public function creerManga($userPseudo, $serieId){
+        return ".?pseudo=$userPseudo&serie=$serieId&action=creerManga";
     }
 
     public function connexionPage(){

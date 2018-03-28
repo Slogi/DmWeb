@@ -97,7 +97,7 @@ class Controller
         }
     }
 
-    public function newManga($idSerie) {
+    public function newManga($userPseudo,$idSerie) {
         if($idSerie === null){
             $this->view->makeUnknownActionPage();
         }
@@ -110,20 +110,23 @@ class Controller
 
     public function saveNewManga(array $data) {
         $idSerie = $data['idSerie'];
-        $mb = new MangaBuilder($data);
-        if ($mb->isValidManga()){
-            $manga = $mb->createManga();
-            if($manga->getDateParu() === ''){
-                $manga->setDefaultDateParu();
+
+            $mb = new MangaBuilder($data);
+            if ($mb->isValidManga() && !$this->mangadb->read($idSerie, $data['numTome'])){
+                $manga = $mb->createManga();
+                if($manga->getDateParu() === ''){
+                    $manga->setDefaultDateParu();
+                }
+                $mangaId = $this->mangadb->create($manga, $idSerie);
+                $this->view->makeMangaCreatedPage($idSerie, $_SESSION['user']);
+
             }
-            $mangaId = $this->mangadb->create($manga, $idSerie);
-            $this->view->makeMangaCreatedPage($idSerie, $_SESSION['user']);
+            else {
 
-        }
-        else {
+                $this->view->makeMangaCreationPage($mb, $idSerie);
+            }
 
-            $this->view->makeMangaCreationPage($mb, $idSerie);
-        }
+
     }
 
     public function saveNewCompte(array $data) {

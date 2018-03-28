@@ -49,18 +49,24 @@ class View
     }
 
     public function makeSeriePage($userPseudo, Serie $s) {
-        $this->title = self::htmlesc($s->getTitre());
+        $sTitre = self::htmlesc($s->getTitre());
+        $sId = self::htmlesc($s->getIdSerie());
+        $this->title = $sTitre;
         $listeMangas = $s->getMangas();
 
+
         if($listeMangas !== null ){
+            $this->content .= "<h1>". $sTitre . "</h1>";
+            $this->content .= "<a href=\"". $this->router->creerManga($userPseudo,$sId) . "\">Ajouter un manga à cette série</a></br>";
             foreach ($listeMangas as $m) {
                 $this->content .= $this->listeMangas($userPseudo, $m, $s);
             }
         }
         else  {
-                    $s = "<h1>".  $userPseudo ."</h1>";
-                    $s .="<h2>".  $this->title ."</h2>";
-                    $this->content = $s;
+                    $t = "<h1>".  $userPseudo ."</h1>";
+                    $t .="<h2>".  $this->title ."</h2>";
+                    $t .= "<a href=\"". $this->router->creerManga($userPseudo,$sId) . "\">Ajouter un manga à cette série</a></br>";
+                    $this->content = $t;
         }
     }
 
@@ -189,6 +195,7 @@ class View
         return $s;
 
     }
+
     public function makeConnexionForm($err=null){
 
         $this->title = "Connectez-vous";
@@ -204,6 +211,7 @@ class View
         $this->content = $s;
 
     }
+    
     protected function getFormConn(){
 
         $s = "<label for=\"pseudo\">Pseudo</label>";
@@ -342,7 +350,7 @@ class View
     }
 
     public function makeMangaCreatedPage($serieId, $userPseudo){
-        $this->router->POSTredirect($this->router->seriePage($serieId, $userPseudo), 'Manga Crée, 
+        $this->router->POSTredirect($this->router->seriePage($userPseudo,$serieId ), 'Manga Crée, 
                                                         vous pouvez en ajouter un autre');
     }
 
@@ -378,6 +386,9 @@ class View
 </head>
 <body>
 <?php include "templateMenu.php"; ?>
+<?php if ($this->feedback !== '') { ?>
+    <div class="feedback"><?php echo $this->feedback; ?></div>
+<?php } ?>
     <main>
         <?php echo $this->content; ?>
     </main>
