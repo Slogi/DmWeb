@@ -108,28 +108,15 @@ class Controller
 
     public function saveNewManga(array $data) {
         $idSerie = $data['idSerie'];
-        //echo 'DATE' . ($data['dateParu'] === null);
-        if($data['dateParu'] === null){
-            //echo 'date null';
-            $data['dateParu'] = date('Y-m-d H:i:s');
-        }
-        //echo $idSerie;
         $mb = new MangaBuilder($data);
         if ($mb->isValidManga()){
-            var_dump($mb);
-
             $manga = $mb->createManga();
             if($manga->getDateParu() === ''){
                 $manga->setDefaultDateParu();
             }
-            //echo 'date : ' . $manga->getDateParu();
-
-
-
-            var_dump($manga);
             $mangaId = $this->mangadb->create($manga, $idSerie);
 
-            echo 'DONE';
+
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
@@ -140,6 +127,18 @@ class Controller
             $this->view->makeMangaCreationPage($mb, $idSerie);
         }
 
+    }
+
+    public function deleteManga($userPseudo, $serieId, $tomeId) {
+        /* On récupère la couleur en BD */
+        $manga = $this->mangadb->read($serieId, $tomeId);
+        if ($manga === null) {
+            /* La couleur n'existe pas en BD */
+            $this->view->makeUnknownMangaPage();
+        } else {
+            /* La couleur existe, on prépare la page */
+            $this->view->makeMangaDeletePage($userPseudo, $serieId, $manga);
+        }
     }
 
 

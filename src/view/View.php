@@ -28,6 +28,7 @@ class View
     }
 
     public function makeMangaPage($userPseudo, Serie $s, Manga $m) {
+        $sId = self::htmlesc($s->getIdSerie());
         $sTitre = self::htmlesc($s->getTitre());
         $sAuteur = self::htmlesc($s->getAuteur());
         $sSynopsis = self::htmlesc($s->getSynopsis());
@@ -77,7 +78,7 @@ class View
                 $serieId = self::htmlesc($serie->getIdSerie());;
                 echo '<li>';
                 echo '<a href="'.$this->router->seriePage($user, $serieId).'">';
-                echo '<h4>'.$titreSerie. '</h4>';
+                echo $titreSerie;
                 echo '</a>';
                 echo '</li>';
             }
@@ -90,6 +91,11 @@ class View
 
     public function makeUnknownActionPage() {
         include("template404.php");
+    }
+
+    public function makeUnknownMangaPage() {
+        $this->title = "Erreur";
+        $this->content = "Le manga demandé n'existe pas.";
     }
 
     public function makeSerieCreationPage(SerieBuilder $builder) {
@@ -179,6 +185,14 @@ class View
         return $s;
     }
 
+    public function makeMangaDeletePage($userPseudo, $serieId, Manga $m) {
+        $mNumTome = self::htmlesc($m->getNumTome());
+
+        $this->title = "Suppression du tome $mNumTome";
+        $this->content = "<p>Le tome « {$mNumTome} » va être supprimé.</p>\n";
+        $this->content .= '<form action="'.$this->router->confirmMangaDelete($userPseudo, $serieId, $mNumTome).'" method="POST">'."\n";
+        $this->content .= "<button>Confirmer</button>\n</form>\n";
+    }
 
 
 
@@ -192,7 +206,7 @@ class View
         //echo $serie->getTitre();
 
         $res = '<li><a href="'.$this->router->seriePage($userPseudo, $serieId).'" >';
-        $res .= '<h3>'. $serie->getTitre().'</h3>';
+        $res .= $serie->getTitre();
         $res .= '</a></li>'."\n";
         return $res;
     }
@@ -202,7 +216,7 @@ class View
         $mNumTome = self::htmlesc($m->getNumTome());
 
         $res = '<li><a href="'.$this->router->mangaPage($userPseudo, $sId, $mNumTome).'" >';
-        $res .= '<h3>'. $s->getTitre().' Tome '. $m->getNumTome().'</h3>';
+        $res .= $s->getTitre().' Tome '. $m->getNumTome();
         $res .= '</a></li>'."\n";
         return $res;
     }

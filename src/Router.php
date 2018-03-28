@@ -76,6 +76,14 @@ class Router
                     case "sauverNouveauManga" :
                         $mangaId = $ctrl->saveNewManga($_POST);
                         break;
+                    case "supprimer" :
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
+                        }
+
+                        break;
                 }
             }catch (Exception $e) {
                 echo $e;
@@ -118,6 +126,14 @@ class Router
 
     public function saveCreatedManga() {
         return ".?action=sauverNouveauManga";
+    }
+
+    public function mangaDeletePage($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=supprimer";
+    }
+
+    public function confirmMangaDelete($userPseudo,$serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=confirmerSuppression";
     }
 
 
