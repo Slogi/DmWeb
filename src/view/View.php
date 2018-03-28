@@ -44,6 +44,7 @@ class View
         $s .="<h3> Résumé :" .$mResume . "</h3>";
         $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
         $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
+        $s .="<a href=\"". $this->router->mangaModifPage($userPseudo, $sId, $mNumTome) . "\">Modifier</a>";
         $this->content = $s;
     }
 
@@ -367,24 +368,21 @@ class View
         else {
             ?>
 
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <title><?php echo $this->title; ?></title>
-                <link rel="stylesheet" href="<?php echo $this->style ?>"/>
-                <link rel="stylesheet" href="./skin/banner.css"/>
-            </head>
-            <body>
-            <?php
-            include "templateMenu.php"; ?>
-            <main>
-                <?php
-                echo $this->content;
-                ?>
-            </main>
-            </body>
-            </html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title><?php echo $this->title; ?></title>
+    <link rel="stylesheet" href="<?php echo $this->style; ?>"/>
+    <link rel="stylesheet" href="./skin/banner.css"/>
+</head>
+<body>
+<?php include "templateMenu.php"; ?>
+    <main>
+        <?php echo $this->content; ?>
+    </main>
+</body>
+</html>
 
             <?php
         }

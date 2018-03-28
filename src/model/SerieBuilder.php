@@ -39,9 +39,13 @@ class SerieBuilder{
         else if (mb_strlen($this->data["auteurSerie"], 'UTF-8') > 100)
             $this->errors["auteurSerie"] = "Le nom de l'auteur doit faire moins de 100 caractères";
 
-        if (mb_strlen($this->data["resumeSerie"], 'UTF-8') > 1000){
-            $this->errors["auteurSerie"] = "Le résumé doit faire moins de 1000 caractères";
+        if (key_exists("resumeSerie", $this->data)){
+            if (mb_strlen($this->data["resumeSerie"], 'UTF-8') > 1000){
+                $this->errors["auteurSerie"] = "Le résumé doit faire moins de 1000 caractères";
+            }
         }
+
+
         return count($this->errors) === 0;
 
     }

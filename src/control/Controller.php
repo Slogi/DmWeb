@@ -77,11 +77,14 @@ class Controller
 
     public function saveNewSerie(array $data) {
         $sb = new SerieBuilder($data);
+        //var_dump($data) ;
+
         if ($sb->isValidSerie()){
             $serie = $sb->createSerie();
             $serieId = $this->seriedb->create($serie, "user1");
 
-            $this->newManga($serieId);
+            $this->view->makeSeriePage("user1", $serieId);
+            //$this->newManga($serieId);
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
