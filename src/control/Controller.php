@@ -8,18 +8,24 @@
 
 require_once ("model/Serie.php");
 require_once ("model/SerieBuilder.php");
+
+require_once ("model/CompteBuilder.php");
+
 require_once ("model/MangaBuilder.php");
+
 
 class Controller
 {
     protected $view;
     protected $mangadb;
     protected $seriedb;
+    protected $comptedb;
 
-    public function __construct(View $v, MangaStorage $mangadb, SerieStorage $seriedb) {
+    public function __construct(View $v, MangaStorage $mangadb, SerieStorage $seriedb, CompteStorage $comptedb) {
         $this->view = $v;
         $this->mangadb = $mangadb;
         $this->seriedb = $seriedb;
+        $this->comptedb = $comptedb;
     }
 
     public function mangaPage($userPseudo, $serieId, $tomeId) {
@@ -124,7 +130,50 @@ class Controller
 
         }
         else {
-            $this->view->makeMangaCreationPage($mb, $idSerie);
+
+            $this->view->makeMangaCreationPage($mb);
+        }
+    }
+
+    public function saveNewCompte(array $data) {
+
+        $cb = new CompteBuilder($data);
+
+        if ($cb->isValid($this->comptedb)){
+            $compte = $cb->createCompte();
+            $pseudo = $this->comptedb->create($compte);
+
+        }
+        else {
+            $this->view->makeInscriptionPage($cb);
+        }
+    }
+
+    public function newCompte() {
+        $cb = new CompteBuilder();
+        $this->view->makeInscriptionPage($cb);
+    }
+
+    public function connexion (){
+        $this->view->makeConnexionForm();
+    }
+
+    public function saveConn(array $data) {
+
+        $pseudo = $data['pseudo'];
+        $mdp = $data['mdp'];
+        $compte = $this->comptedb->checkAuth($pseudo, $mdp);
+
+        if ( $compte !== null ){
+
+            $_SESSION['user'] =  $compte;
+            echo 'connexion réussie';
+        }
+        else {
+            $this->view->makeConnexionForm();
+
+            
+
         }
 
     }

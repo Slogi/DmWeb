@@ -9,7 +9,6 @@ require_once("Router.php");
 
 class View
 {
-
     protected $router;
     protected $style;
     protected $title;
@@ -109,15 +108,94 @@ class View
 
     }
 
+
+    public function makeInscriptionPage(CompteBuilder $builder)
+    {
+        echo "makeInscriptionPage";
+        $this->title = "Inscrivez-vous";
+        $s = '<form action="' . $this->router->saveCreatedCompte() . '" method="POST">' . "\n";
+        $s .= self::getFormInscrit($builder);
+    }
     public function makeMangaCreationPage(MangaBuilder $builder, $idSerie) {
         $this->title = "Ajouter votre Manga";
         $s = '<form action="'.$this->router->saveCreatedManga().'" method="POST">'."\n";
         $s .= self::getFormFieldsManga($builder, $idSerie);
         $s .= "<button>Créer un manga</button>\n";
+
         $s .= "</form>\n";
         $this->content = $s;
 
     }
+
+    protected function getFormInscrit( CompteBuilder $builder){
+
+        $pseudoCompteRef = $builder->getPseudoRef();
+        $mdpCompteRef = $builder->getMdpRef();
+        $nomCompteRef = $builder->getNomRef();
+        $prenomCompteRef = $builder->getPrenomRef();
+        $dateBirthCompteRef = $builder->getDateBirthRef();
+        $genreCompteRef = $builder->getGenreRef();
+
+        $s = "<h2>Inscrivez-vous</h2>";
+        $s .="<label>Nom<input name=\"nomCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($nomCompteRef)).'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .= "</label><label>Prenom<input name=\"prenomCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($prenomCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label><label>Date de Naissance<input name=\"dateBirthCompte\" type=\"date\" value=\"";
+        $s .= self::htmlesc($builder->getData($dateBirthCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label><label>Homme<input type=\"radio\" checked=\"checked\" id=\"homme\" name=\"genreCompte\" value=\"homme\">";
+        $s .="</label><label>Femme<input type=\"radio\" id=\"femme\" name=\"genreCompte\" value=\"femme\">";
+        $s .="</label><label>Autre<input type=\"radio\" name=\"genreCompte\" id=\"autre\" value=\"autre\">";
+        $s .="</label><label>Pseudo<input name=\"pseudoCompte\" type=\"text\" value=\"";
+        $s .= self::htmlesc($builder->getData($pseudoCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+        $s .="</label><label>Mot de passe<input name=\"mdpCompte\" type=\"password\" value=\"";
+        $s .= self::htmlesc($builder->getData($mdpCompteRef)) .'">';
+        $err = $builder->getErrors($nomCompteRef);
+        if ($err !== null)
+            $s .= ' <span>'.$err.'</span>';
+
+        $s .="</label>";
+        return $s;
+
+    }
+    public function makeConnexionForm(){
+
+        $this->title = "Connectez-vous";
+        $s = '<form action="'.$this->router->saveConnexion().'" method="POST">'."\n";
+        $s .= self::getFormConn();
+        $s .= "<button>Créer</button>\n";
+        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=\"#\">inscrivez-vous</a></p>";
+        $s .= "</form>\n";
+        $this->content = $s;
+    }
+    protected function getFormConn(){
+
+        $s = "<label for=\"pseudo\">Pseudo</label>";
+        $s .="<input id=\"pseudo\" name=\"pseudo\" type=\"text\">";
+        $s .="<label for=\"mdp\">Mot de passe</label>";
+        $s .="<input id=\"mdp\" name=\"mdp\" type=\"password\">";
+        return $s;
+    }
+
+    protected function getFormFields(SerieBuilder $builder)
+    {
+        echo "formulaire";
+    }
+
 
     protected function getFormFieldsManga(MangaBuilder $builder, $idSerie) {
         $numTomeRef = $builder->getNumTomeRef();
@@ -154,6 +232,7 @@ class View
     }
 
     protected function getFormFieldsSerie(SerieBuilder $builder) {
+
         $titreSerieRef = $builder->getTitreRef();
         $s = "";
         $s .= '<p><label>Titre de la Serie : <input type="text" name="'.$titreSerieRef.'" value="';
@@ -208,6 +287,9 @@ class View
         $this->content .= '<button>Modifier</button>'."\n";
         $this->content .= '</form>'."\n";
     }
+
+
+
 
 
 

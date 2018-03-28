@@ -1,17 +1,20 @@
 <?php
 
+require_once ("model/CompteStorageStub.php");
 require_once ("model/SerieStorage.php");
 require_once("view/View.php");
 require_once("control/Controller.php");
 
+session_name("dmWeb");
+session_start();
+
 class Router
 {
 
-
-
+    private $db;
 
     public function __construct($db){
-               $this->db = $db;
+        $this->db = $db;
     }
 
     public function main() {
@@ -20,16 +23,27 @@ class Router
         $view = new View($this);
         $mangadb = new MangaStorageImpl($this->db);
         $seriedb = new SerieStorageImpl($this->db, $mangadb);
+        $comptedb = new CompteStorageStub($this->db);
+
+
+        $ctrl = new Controller($view, $mangadb, $seriedb, $comptedb);
 
 
 
         $ctrl = new Controller($view, $mangadb, $seriedb);
 
 
+
         $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
+
+
+
+
+
+
 
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
@@ -44,6 +58,54 @@ class Router
 
         }
 
+
+
+        try{
+            switch ($action) {
+                case "voir":
+                    if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
+                        //echo $serieId;
+                        //echo $tomeId;
+                        $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
+                    }
+                    elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
+                        $ctrl->seriePage($userPseudo, $serieId);
+                    }
+                    elseif($userPseudo !== null && $serieId === null && $tomeId === null){
+                        //echo 'aaa';
+                        //echo $userPseudo;
+                        $ctrl->userPage($userPseudo);
+                    }
+                    else {
+                        $view->makeUnknownActionPage();
+                    }
+                    break;
+                case "accueil":
+                    $ctrl->allUsersWithSeriesPage();
+                    break;
+                case "creerSerie" :
+                    echo $action;
+                    $ctrl->newSerie();
+                    break;
+                case "creerCompte" :
+                    echo $action;
+                    $ctrl->newCompte();
+                    break;
+                case "sauverNouvelleSerie" :
+                    $ctrl->saveNewSerie($_POST);
+                    break;
+                case "sauverNouveauCompte" :
+
+                    $ctrl->saveNewCompte($_POST);
+                    break;
+                case "connexion" :
+                    echo $action;
+                    $ctrl->connexion();
+                    break;
+                case "sauverConnexion" :
+
+                    $ctrl->saveConn($_POST);
+                    break;
 
             try{
                 switch ($action) {
@@ -122,13 +184,14 @@ class Router
                     //$ctrl->mangaPage($mangaId);
 
             }
+        }catch (Exception $e) {
+            echo $e;
+            //$view->makeUnknownActionPage($e);
+        }
+        $view->render();
+        //$ctrl->mangaPage($mangaId);
 
-
-
-        
-
-
-
+    }
 
     public function mangaPage($userPseudo, $serieId, $tomeId) {
         return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId";
@@ -144,6 +207,11 @@ class Router
 
     public function saveCreatedSerie() {
         return ".?action=sauverNouvelleSerie";
+    }
+
+
+    public function saveCreatedCompte() {
+        return ".?action=sauverNouveauCompte";
     }
 
     public function saveCreatedManga() {
@@ -167,4 +235,8 @@ class Router
     }
 
 
+
+    public function saveConnexion() {
+        return ".?action=sauverConnexion";
+    }
 }
