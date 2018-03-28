@@ -8,7 +8,11 @@
 
 require_once ("model/Serie.php");
 require_once ("model/SerieBuilder.php");
+
 require_once ("model/CompteBuilder.php");
+
+require_once ("model/MangaBuilder.php");
+
 
 class Controller
 {
@@ -74,16 +78,17 @@ class Controller
     }
 
     public function newSerie() {
-        echo "newSerie";
         $sb = new SerieBuilder();
         $this->view->makeSerieCreationPage($sb);
     }
 
     public function saveNewSerie(array $data) {
         $sb = new SerieBuilder($data);
-        if ($sb->isValid()){
+        if ($sb->isValidSerie()){
             $serie = $sb->createSerie();
             $serieId = $this->seriedb->create($serie, "user1");
+
+            $this->newManga($serieId);
 
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
@@ -91,7 +96,42 @@ class Controller
 
         }
         else {
+
             $this->view->makeSerieCreationPage($sb);
+        }
+    }
+
+    public function newManga($idSerie) {
+        if($idSerie === null){
+            $this->view->makeUnknownActionPage();
+        }
+        else {
+            $sb = new MangaBuilder();
+            $this->view->makeMangaCreationPage($sb, $idSerie);
+        }
+
+    }
+
+    public function saveNewManga(array $data) {
+        $idSerie = $data['idSerie'];
+        $mb = new MangaBuilder($data);
+        if ($mb->isValidManga()){
+            $manga = $mb->createManga();
+            if($manga->getDateParu() === ''){
+                $manga->setDefaultDateParu();
+            }
+            $mangaId = $this->mangadb->create($manga, $idSerie);
+
+
+
+            //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
+            //$this->v->makeColorPage($colorId, $color);
+
+
+        }
+        else {
+
+            $this->view->makeMangaCreationPage($mb);
         }
     }
 
@@ -131,6 +171,24 @@ class Controller
         }
         else {
             $this->view->makeConnexionForm();
+
+            
+
+        }
+
+    }
+
+    public function deleteManga($userPseudo, $serieId, $tomeId) {
+        /* On récupère la couleur en BD */
+        $manga = $this->mangadb->read($serieId, $tomeId);
+        if ($manga === null) {
+            /* La couleur n'existe pas en BD */
+            $this->view->makeUnknownMangaPage();
+        } else {
+            /* La couleur existe, on prépare la page */
+            $this->view->makeMangaDeletePage($userPseudo, $serieId, $manga);
         }
     }
+
+
 }

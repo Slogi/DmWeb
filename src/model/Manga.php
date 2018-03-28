@@ -26,4 +26,10 @@ class Manga
     public function getDateParu(){
         return $this->dateParu;
     }
+
+    public function setDefaultDateParu(){
+        $this->dateParu = null;
+    }
+
+
 }

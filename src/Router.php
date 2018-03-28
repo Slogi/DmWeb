@@ -25,14 +25,18 @@ class Router
         $seriedb = new SerieStorageImpl($this->db, $mangadb);
         $comptedb = new CompteStorageStub($this->db);
 
+
         $ctrl = new Controller($view, $mangadb, $seriedb, $comptedb);
+
+
+
+        $ctrl = new Controller($view, $mangadb, $seriedb);
+
+
 
         $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
-
-        //$mangaId = key_exists('manga', $_GET) ? $_GET['manga'] : null;
-
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
 
 
@@ -50,9 +54,10 @@ class Router
 
                * auquel cas on affiche sa page. */
             $action = ($userPseudo === null && $serieId === null && $tomeId === null) ? "accueil" : "voir";
-            //echo $action;
+
 
         }
+
 
 
         try{
@@ -102,6 +107,60 @@ class Router
                     $ctrl->saveConn($_POST);
                     break;
 
+            try{
+                switch ($action) {
+                    case "voir":
+                        if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
+                            $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
+                        }
+                        elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
+                            $ctrl->seriePage($userPseudo, $serieId);
+                        }
+                        elseif($userPseudo !== null && $serieId === null && $tomeId === null){
+                            $ctrl->userPage($userPseudo);
+                        }
+                        else {
+                            $view->makeUnknownActionPage();
+                        }
+                        break;
+                    case "accueil":
+                        $ctrl->allUsersWithSeriesPage();
+                        break;
+                    case "creerSerie" :
+                        $ctrl->newSerie();
+                        break;
+                    case "sauverNouvelleSerie" :
+                        $serieId = $ctrl->saveNewSerie($_POST);
+                        break;
+                    case "creerManga" :
+                        $ctrl->newManga(null);
+                        break;
+                    case "sauverNouveauManga" :
+                        $mangaId = $ctrl->saveNewManga($_POST);
+                        break;
+                    case "supprimer" :
+                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                            $view->makeUnknownActionPage();
+                        } else {
+                            $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
+                        }
+
+                        break;
+                }
+            }catch (Exception $e) {
+                echo $e;
+                //$view->makeUnknownActionPage($e);
+            }
+            $view->render();
+
+
+
+
+
+
+
+                    //$ctrl->mangaPage($mangaId);
+
             }
         }catch (Exception $e) {
             echo $e;
@@ -128,9 +187,24 @@ class Router
         return ".?action=sauverNouvelleSerie";
     }
 
+
     public function saveCreatedCompte() {
         return ".?action=sauverNouveauCompte";
     }
+
+    public function saveCreatedManga() {
+        return ".?action=sauverNouveauManga";
+    }
+
+    public function mangaDeletePage($userPseudo, $serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=supprimer";
+    }
+
+    public function confirmMangaDelete($userPseudo,$serieId, $tomeId) {
+        return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=confirmerSuppression";
+    }
+
+
 
     public function saveConnexion() {
         return ".?action=sauverConnexion";
