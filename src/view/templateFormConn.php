@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title><?php echo $this->title; ?></title>
@@ -10,9 +10,9 @@
 <?php
 include "templateMenu.php";?>
 <main>
-<?php
-echo $this->content;
-?>
+    <?php
+    echo $this->content;
+    ?>
 </main>
 </body>
 </html>

@@ -27,8 +27,9 @@ class View
     }
 
     public function makeMangaPage($userPseudo, Serie $s, Manga $m) {
+
         $sId = self::htmlesc($s->getIdSerie());
-        $sTitre = self::htmlesc($s->getTitre());
+        $this->title = self::htmlesc($s->getTitre());
         $sAuteur = self::htmlesc($s->getAuteur());
         $sSynopsis = self::htmlesc($s->getSynopsis());
         $mNumTome = self::htmlesc($m->getNumTome());
@@ -39,14 +40,12 @@ class View
     }
 
     public function makeSeriePage($userPseudo, Serie $s) {
-        $sTitre = self::htmlesc($s->getTitre());
+        $this->title = self::htmlesc($s->getTitre());
         $listeMangas = $s->getMangas();
-        //var_dump($listeMangas);
-        $content = $this->content;
 
         if($listeMangas !== null ){
             foreach ($listeMangas as $m) {
-                $content .= $this->listeMangas($userPseudo, $m, $s);
+                $this->content .= $this->listeMangas($userPseudo, $m, $s);
             }
             include("templateSerie.php");
         }
@@ -54,38 +53,41 @@ class View
     }
 
     public function makeUserPage($userPseudo, $infoUser) {
-        $content = $this->content;
+
         foreach ($infoUser as $serie){
-            $content .= $this->listeSeries($userPseudo, $serie);
+            $this->content .= $this->listeSeries($userPseudo, $serie);
         }
         include("templateUser.php");
     }
 
     public function makeAllUsersWithSeriesPage($allUsersWithSeries){
-        $content = $this->content;
+        $s = "";
         foreach ($allUsersWithSeries as $user => $series){
 
-            echo '<ul>';
-            echo '<li>';
-            echo '<a href="'.$this->router->userPage($user).'">';
-            echo '<h3>' . $user . '</h3>';
-            echo '</a>';
-            echo '<ul>';
+            $s.='<ul>';
+            $s.= '<li>';
+            $s.= '<a href="'.$this->router->userPage($user).'">';
+            $s.= '<h3>' . $user . '</h3>';
+            $s.= '</a>';
+            $s.= '<ul>';
 
             foreach ($series as $serie){
                 $titreSerie = self::htmlesc($serie->getTitre());;
                 $serieId = self::htmlesc($serie->getIdSerie());;
-                echo '<li>';
-                echo '<a href="'.$this->router->seriePage($user, $serieId).'">';
-                echo $titreSerie;
-                echo '</a>';
-                echo '</li>';
+                $s.= '<li>';
+                $s.= '<a href="'.$this->router->seriePage($user, $serieId).'">';
+                $s.= $titreSerie;
+                $s.= '</a>';
+                $s.= '</li>';
             }
 
-            echo '</ul>';
-            echo '</li>';
-            echo '</ul>';
+            $s.= '</ul>';
+            $s.= '</li>';
+            $s.= '</ul>';
         }
+        $this->content = $s;
+
+        include("templateAccueil.php");
     }
 
     public function makeUnknownActionPage() {
@@ -99,29 +101,35 @@ class View
 
     public function makeSerieCreationPage(SerieBuilder $builder) {
         $this->title = "Ajouter votre série";
-        //$s = '<form action="" method="POST">'."\n";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveCreatedSerie().'" method="POST">'."\n";
         $s .= self::getFormFieldsSerie($builder);
         $s .= "<button>Créer une série</button>\n";
         $s .= "</form>\n";
         $this->content = $s;
+        include("templateCreerSerie.php");
 
     }
-
 
     public function makeInscriptionPage(CompteBuilder $builder)
     {
-        echo "makeInscriptionPage";
         $this->title = "Inscrivez-vous";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="' . $this->router->saveCreatedCompte() . '" method="POST">' . "\n";
         $s .= self::getFormInscrit($builder);
+        $s .= "<button>S'incrire</button>\n";
+        $s .= "</form>\n";
+        $this->content = $s;
+        include ("templateFormInsc.php");
     }
+
+
     public function makeMangaCreationPage(MangaBuilder $builder, $idSerie) {
         $this->title = "Ajouter votre Manga";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveCreatedManga().'" method="POST">'."\n";
         $s .= self::getFormFieldsManga($builder, $idSerie);
         $s .= "<button>Créer un manga</button>\n";
-
         $s .= "</form>\n";
         $this->content = $s;
 
@@ -175,12 +183,15 @@ class View
     public function makeConnexionForm(){
 
         $this->title = "Connectez-vous";
+        $this->style = "./skin/formInsc.css";
         $s = '<form action="'.$this->router->saveConnexion().'" method="POST">'."\n";
         $s .= self::getFormConn();
-        $s .= "<button>Créer</button>\n";
-        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=\"#\">inscrivez-vous</a></p>";
+        $s .= "<button>Connexion</button>\n";
+        $s .="<p class=\"inscription\">Vous n'avez pas de compte, <a href=".$this->router->inscriptionPage().">inscrivez-vous</a></p>";
         $s .= "</form>\n";
         $this->content = $s;
+        include("templateFormConn.php");
+
     }
     protected function getFormConn(){
 
@@ -273,16 +284,7 @@ class View
         $this->content .= "<button>Confirmer</button>\n</form>\n";
     }
 
-
-
-
-
-
-
-
-
-
-    protected function listeSeries($userPseudo, $serie) {
+    protected function listeSeries($userPseudo, Serie $serie) {
         //$userPseudo = self::htmlesc($infoUser->get());
         $serieId = self::htmlesc($serie->getIdSerie());
         //echo $serie->getTitre();
@@ -293,7 +295,7 @@ class View
         return $res;
     }
 
-    protected function listeMangas($userPseudo, $m, $s) {
+    protected function listeMangas($userPseudo, Manga $m, Serie $s) {
         $sId = self::htmlesc($s->getIdSerie());
         $mNumTome = self::htmlesc($m->getNumTome());
 
@@ -316,11 +318,8 @@ class View
             'UTF-8');
     }
 
-
-
     public function render() {
-        echo $this->title;
-        echo $this->content;
+
         if ($this->title === null || $this->content === null) {
             //$this->makeUnexpectedErrorPage();
         }

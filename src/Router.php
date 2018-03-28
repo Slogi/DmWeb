@@ -29,21 +29,10 @@ class Router
         $ctrl = new Controller($view, $mangadb, $seriedb, $comptedb);
 
 
-
-        $ctrl = new Controller($view, $mangadb, $seriedb);
-
-
-
         $userPseudo = key_exists('pseudo', $_GET) ? $_GET['pseudo'] : null;
         $serieId = key_exists('serie', $_GET) ? $_GET['serie'] : null;
         $tomeId = key_exists('tome', $_GET) ? $_GET['tome'] : null;
         $action = key_exists('action', $_GET) ? $_GET['action'] : null;
-
-
-
-
-
-
 
         if ($action === null) {
             /* Pas d'action demandée : par défaut on affiche
@@ -59,21 +48,16 @@ class Router
         }
 
 
-
         try{
             switch ($action) {
                 case "voir":
                     if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
-                        //echo $serieId;
-                        //echo $tomeId;
                         $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
                     }
                     elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
                         $ctrl->seriePage($userPseudo, $serieId);
                     }
                     elseif($userPseudo !== null && $serieId === null && $tomeId === null){
-                        //echo 'aaa';
-                        //echo $userPseudo;
                         $ctrl->userPage($userPseudo);
                     }
                     else {
@@ -84,90 +68,44 @@ class Router
                     $ctrl->allUsersWithSeriesPage();
                     break;
                 case "creerSerie" :
-                    echo $action;
                     $ctrl->newSerie();
                     break;
-                case "creerCompte" :
-                    echo $action;
-                    $ctrl->newCompte();
-                    break;
                 case "sauverNouvelleSerie" :
-                    $ctrl->saveNewSerie($_POST);
+                    $serieId = $ctrl->saveNewSerie($_POST);
+                    break;
+                case "creerManga" :
+                    $ctrl->newManga(null);
+                    break;
+                case "sauverNouveauManga" :
+                    $mangaId = $ctrl->saveNewManga($_POST);
+                    break;
+                case "supprimer" :
+                    if ($userPseudo === null || $serieId === null || $tomeId === null) {
+                        $view->makeUnknownActionPage();
+                    } else {
+                        $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
+                    }
                     break;
                 case "sauverNouveauCompte" :
 
                     $ctrl->saveNewCompte($_POST);
                     break;
                 case "connexion" :
-                    echo $action;
                     $ctrl->connexion();
                     break;
                 case "sauverConnexion" :
 
                     $ctrl->saveConn($_POST);
                     break;
-
-            try{
-                switch ($action) {
-                    case "voir":
-                        if($userPseudo !== null && $serieId !== null && $tomeId !== null ){
-                            $ctrl->mangaPage($userPseudo, $serieId, $tomeId);
-                        }
-                        elseif($userPseudo !== null && $serieId !== null && $tomeId === null){
-                            $ctrl->seriePage($userPseudo, $serieId);
-                        }
-                        elseif($userPseudo !== null && $serieId === null && $tomeId === null){
-                            $ctrl->userPage($userPseudo);
-                        }
-                        else {
-                            $view->makeUnknownActionPage();
-                        }
-                        break;
-                    case "accueil":
-                        $ctrl->allUsersWithSeriesPage();
-                        break;
-                    case "creerSerie" :
-                        $ctrl->newSerie();
-                        break;
-                    case "sauverNouvelleSerie" :
-                        $serieId = $ctrl->saveNewSerie($_POST);
-                        break;
-                    case "creerManga" :
-                        $ctrl->newManga(null);
-                        break;
-                    case "sauverNouveauManga" :
-                        $mangaId = $ctrl->saveNewManga($_POST);
-                        break;
-                    case "supprimer" :
-                        if ($userPseudo === null || $serieId === null || $tomeId === null) {
-                            $view->makeUnknownActionPage();
-                        } else {
-                            $ctrl->deleteManga($userPseudo, $serieId, $tomeId);
-                        }
-
-                        break;
-                }
-            }catch (Exception $e) {
-                echo $e;
-                //$view->makeUnknownActionPage($e);
-            }
-            $view->render();
-
-
-
-
-
-
-
-                    //$ctrl->mangaPage($mangaId);
-
+                case "creerCompte" :
+                    $ctrl->newCompte();
+                    break;
             }
         }catch (Exception $e) {
             echo $e;
             //$view->makeUnknownActionPage($e);
         }
         $view->render();
-        //$ctrl->mangaPage($mangaId);
 
     }
 
@@ -187,7 +125,6 @@ class Router
         return ".?action=sauverNouvelleSerie";
     }
 
-
     public function saveCreatedCompte() {
         return ".?action=sauverNouveauCompte";
     }
@@ -204,9 +141,23 @@ class Router
         return ".?pseudo=$userPseudo&serie=$serieId&tome=$tomeId&action=confirmerSuppression";
     }
 
-
-
     public function saveConnexion() {
         return ".?action=sauverConnexion";
+    }
+
+    public function accueilPage(){
+        return ".?action=accueil";
+    }
+
+    public function connexionPage(){
+        return ".?action=connexion";
+    }
+
+    public function creerSerie(){
+        return ".?action=creerSerie";
+    }
+
+    public function inscriptionPage(){
+        return ".?action=creerCompte";
     }
 }

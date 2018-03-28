@@ -100,7 +100,18 @@ class MangaStorageImpl implements MangaStorage
 
     public function delete($id, $numTome)
     {
-        // TODO: Implement delete() method.
+
+         $query = "DELETE FROM manga
+                    WHERE idSerie = $id and numTome = $numTome";
+
+        $stmt = $this->db->prepare($query);
+
+        if ( $stmt->execute()=== true ){
+
+            return "Le manga a été supprimé";
+        };
+
+        return null;
     }
 }
 

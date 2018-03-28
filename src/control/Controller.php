@@ -122,8 +122,6 @@ class Controller
             }
             $mangaId = $this->mangadb->create($manga, $idSerie);
 
-
-
             //RENVOYER SUR LA PAGE D'AJOUR D'UN MANGA
             //$this->v->makeColorPage($colorId, $color);
 
@@ -172,8 +170,6 @@ class Controller
         else {
             $this->view->makeConnexionForm();
 
-            
-
         }
 
     }
@@ -189,6 +185,4 @@ class Controller
             $this->view->makeMangaDeletePage($userPseudo, $serieId, $manga);
         }
     }
-
-
 }
