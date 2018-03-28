@@ -216,7 +216,7 @@ class Controller
         if ( $_SESSION['pseudo'] === $this->mangadb->readPseudo($serieId, $tomeId) ){
             $m = $this->mangadb->read($serieId, $tomeId);
             if ($m === null) {
-                $this->view->makeUnknownMangaPage();
+                $this->view->makeMangaDeletedErr2($serieId, $_SESSION['pseudo']s);
             } else {
                 /* Extraction des données modifiables */
                 $mf = MangaBuilder::buildFromColor($m);
