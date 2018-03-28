@@ -44,6 +44,7 @@ class View
         $s .="<h3> Résumé :" .$mResume . "</h3>";
         $s .="<h3>Date de parution : ".$mDateParu ."</h3>";
         $s .="<a href=\"". $this->router->mangaDeletePage($userPseudo, $sId, $mNumTome) . "\">Supprimer</a>";
+        $s .="<a href=\"". $this->router . "\">Modifier</a>";
         $this->content = $s;
     }
 
@@ -57,9 +58,9 @@ class View
             }
         }
         else  {
-                    $s = "<h1>".  $userPseudo ."</h1>";
-                    $s .="<h2>".  $this->title ."</h2>";
-                    $this->content = $s;
+            $s = "<h1>".  $userPseudo ."</h1>";
+            $s .="<h2>".  $this->title ."</h2>";
+            $this->content = $s;
         }
     }
 
@@ -248,8 +249,6 @@ class View
 
         $s .= "<input type=\"hidden\" name=\"idSerie\" value=\"$idSerie\" />";
         return $s;
-
-
     }
 
     protected function getFormFieldsSerie(SerieBuilder $builder) {
@@ -321,6 +320,10 @@ class View
 
     public function makeCompteCreatedPage(){
         $this->router->POSTredirect($this->router->connexionPage(), 'Compte crée');
+    }
+
+    public function deconnexionSucess(){
+        $this->router->POSTredirect($this->router->accueilPage(), 'Déconnexion réussie');
     }
 
     public function makeMangaCreatedPage($serieId, $userPseudo){

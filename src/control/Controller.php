@@ -2,6 +2,7 @@
 
 
 require_once ("model/Serie.php");
+require_once ("model/Compte.php");
 require_once ("model/SerieBuilder.php");
 require_once ("model/CompteBuilder.php");
 require_once ("model/MangaBuilder.php");
@@ -154,17 +155,28 @@ class Controller
 
         if ( $compte !== null ){
 
-            $_SESSION['pseudo'] =  $compte;
-            $_SESSION['nom'] =  $compte;
-            $_SESSION['prenom'] =  $compte;
-            $_SESSION['dateBirth'] =  $compte;
+            $_SESSION['pseudo'] =  $compte->getPseudo();
+            $_SESSION['nom'] =  $compte->getNom();
+            $_SESSION['prenom'] =  $compte->getPrenom();
+            $_SESSION['dateBirth'] =  $compte->getDateBirth();
+            $_SESSION['genre'] = $compte->getGenre();
             $this->view->makeConnSucessPage();
         }
         else {
             $this->view->makeConnexionForm("Vos identifiants ne sont pas bons");
 
         }
+    }
 
+    public function deconnexion (){
+
+        if (key_exists('pseudo', $_SESSION ) ){
+            session_destroy();
+            $this->view->deconnexionSucess();
+        }
+        else {
+
+        }
     }
 
     public function deleteManga($userPseudo, $serieId, $tomeId) {
