@@ -131,7 +131,7 @@ class Controller
         }
         else {
 
-            $this->view->makeMangaCreationPage($mb);
+            $this->view->makeMangaCreationPage($mb, $idSerie);
         }
     }
 
